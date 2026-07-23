@@ -1,6 +1,6 @@
 # GeoCanvas - City Map & Poster Generator
 
-Generate beautiful, minimalist map posters and vector maps for any city in the world using OpenStreetMap data.
+Turn OpenStreetMap spatial data into beautiful minimalist city map posters and high-contrast vector maps via an interactive TUI CLI studio and Streamlit web application.
 
 ### Classic Vector Style Examples
 

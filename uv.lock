@@ -349,6 +349,64 @@ wheels = [
 ]
 
 [[package]]
+name = "geocanvas"
+version = "1.0.0"
+source = { editable = "." }
+dependencies = [
+    { name = "geopandas" },
+    { name = "geopy" },
+    { name = "lat-lon-parser" },
+    { name = "matplotlib" },
+    { name = "osmnx" },
+    { name = "pandas" },
+    { name = "pillow" },
+    { name = "requests" },
+    { name = "shapely" },
+    { name = "srtm-py" },
+    { name = "tqdm" },
+]
+
+[package.optional-dependencies]
+streamlit = [
+    { name = "streamlit" },
+    { name = "streamlit-image-select" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "black" },
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "geopandas", specifier = ">=1.0.0" },
+    { name = "geopy", specifier = ">=2.4.0" },
+    { name = "lat-lon-parser", specifier = ">=1.3.0" },
+    { name = "matplotlib", specifier = ">=3.8.0" },
+    { name = "osmnx", specifier = ">=2.0.0,<3" },
+    { name = "pandas", specifier = ">=2.0.0" },
+    { name = "pillow", specifier = ">=10.0.0" },
+    { name = "requests", specifier = ">=2.31.0" },
+    { name = "shapely", specifier = ">=2.0.0" },
+    { name = "srtm-py", specifier = ">=0.3.7" },
+    { name = "streamlit", marker = "extra == 'streamlit'", specifier = ">=1.30.0" },
+    { name = "streamlit-image-select", marker = "extra == 'streamlit'", specifier = ">=0.1.2" },
+    { name = "tqdm", specifier = ">=4.66.0" },
+]
+provides-extras = ["streamlit"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black" },
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "pytest" },
+]
+
+[[package]]
 name = "geographiclib"
 version = "2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1104,64 +1162,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe6ef3fa267035b518369d9511ffab804f839851d2779/pluggy-1.6.0.tar.gz", hash = "sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3", size = 69412, upload-time = "2025-05-15T12:30:07.975Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
-]
-
-[[package]]
-name = "prettymapp"
-version = "0.7.0"
-source = { editable = "." }
-dependencies = [
-    { name = "geopandas" },
-    { name = "geopy" },
-    { name = "lat-lon-parser" },
-    { name = "matplotlib" },
-    { name = "osmnx" },
-    { name = "pandas" },
-    { name = "pillow" },
-    { name = "requests" },
-    { name = "shapely" },
-    { name = "srtm-py" },
-    { name = "tqdm" },
-]
-
-[package.optional-dependencies]
-streamlit = [
-    { name = "streamlit" },
-    { name = "streamlit-image-select" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "black" },
-    { name = "mypy" },
-    { name = "pylint" },
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "geopandas", specifier = ">=1.0.0" },
-    { name = "geopy", specifier = ">=2.4.0" },
-    { name = "lat-lon-parser", specifier = ">=1.3.0" },
-    { name = "matplotlib", specifier = ">=3.8.0" },
-    { name = "osmnx", specifier = ">=2.0.0,<3" },
-    { name = "pandas", specifier = ">=2.0.0" },
-    { name = "pillow", specifier = ">=10.0.0" },
-    { name = "requests", specifier = ">=2.31.0" },
-    { name = "shapely", specifier = ">=2.0.0" },
-    { name = "srtm-py", specifier = ">=0.3.7" },
-    { name = "streamlit", marker = "extra == 'streamlit'", specifier = ">=1.30.0" },
-    { name = "streamlit-image-select", marker = "extra == 'streamlit'", specifier = ">=0.1.2" },
-    { name = "tqdm", specifier = ">=4.66.0" },
-]
-provides-extras = ["streamlit"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "black" },
-    { name = "mypy" },
-    { name = "pylint" },
-    { name = "pytest" },
 ]
 
 [[package]]

@@ -1,12 +1,12 @@
 [project]
-name = "prettymapp"
-version = "0.7.0"
-description = "Create beautiful maps and minimalist city posters from OpenStreetMap data"
+name = "geocanvas"
+version = "1.0.0"
+description = "GeoCanvas: Turn OpenStreetMap spatial data into beautiful minimalist city map posters and high-contrast vector maps via interactive TUI CLI and Streamlit Studio."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
-    { name = "Christoph Rieke", email = "christoph.k.rieke@gmail.com" },
+    { name = "GeoCanvas Contributors" },
 ]
 keywords = ["map", "poster", "cartography", "osm", "openstreetmap", "streamlit", "visualization"]
 classifiers = [
