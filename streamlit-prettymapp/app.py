@@ -17,10 +17,14 @@ from prettymapp.settings import STYLES
 
 
 st.set_page_config(
-    page_title="Map_Generator", page_icon="", initial_sidebar_state="collapsed", layout="wide"
+    page_title="Map_Generator",
+    page_icon="",
+    initial_sidebar_state="collapsed",
+    layout="wide",
 )
 
-st.markdown("""
+st.markdown(
+    """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
@@ -242,7 +246,9 @@ st.markdown("""
         color: #F0F6FC !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 st.markdown("# Prettymapp")
 
@@ -254,6 +260,7 @@ if not st.session_state:
     st.session_state.update(EXAMPLES["Default"])
 
     from prettymapp.settings import LANDCOVER_CLASSES
+
     st.session_state.lc_classes = list(LANDCOVER_CLASSES.keys())
     st.session_state["previous_style"] = "Default"
 
@@ -264,9 +271,11 @@ theme_category = st.selectbox(
     key="theme_category",
 )
 
+
 @st.dialog("Fullscreen View", width="large")
 def show_fullscreen_image(image_path, title):
     st.image(image_path, caption=title, use_container_width=True)
+
 
 @st.cache_data(show_spinner=False)
 def st_create_poster(
@@ -284,14 +293,16 @@ def st_create_poster(
     draw_contours,
     text_position,
     show_text,
-    output_format="png"
+    output_format="png",
 ):
     import sys
     from pathlib import Path
+
     _HERE = Path(__file__).resolve().parent
     sys.path.append(str(_HERE.parent / "poster_generator"))
     import create_map_poster
     from create_map_poster import create_poster, load_theme
+
     create_map_poster.THEME = load_theme(theme_name)
     return create_poster(
         city=city,
@@ -311,6 +322,7 @@ def st_create_poster(
         show_text=show_text,
     )
 
+
 if theme_category == "Classic (Customizable)":
     theme_names = list(STYLES.keys())
     theme_image_pattern = str(_HERE / "assets" / "themes" / "{}.png")
@@ -321,19 +333,29 @@ if theme_category == "Classic (Customizable)":
         "",
         images=theme_image_fp,
         captions=theme_names,
-        index=theme_names.index(st.session_state.get("style", "Peach")) if st.session_state.get("style") in theme_names else 0,
+        index=(
+            theme_names.index(st.session_state.get("style", "Peach"))
+            if st.session_state.get("style") in theme_names
+            else 0
+        ),
         return_value="index",
-        key="classic_theme_image_select"
+        key="classic_theme_image_select",
     )
 
     style = theme_names[selected_theme_index]
     st.session_state["style"] = style
 
-    if st.button("🔍 View selected theme in full screen", key="view_fullscreen_classic"):
+    if st.button(
+        "🔍 View selected theme in full screen", key="view_fullscreen_classic"
+    ):
         show_fullscreen_image(theme_image_fp[selected_theme_index], style)
 else:
     new_themes_dir = _HERE.parent / "poster_generator" / "themes"
-    new_theme_names = sorted([f.stem for f in new_themes_dir.glob("*.json")]) if new_themes_dir.exists() else []
+    new_theme_names = (
+        sorted([f.stem for f in new_themes_dir.glob("*.json")])
+        if new_themes_dir.exists()
+        else []
+    )
 
     theme_image_pattern = str(_HERE / "assets" / "themes" / "{}.png")
     theme_image_fp = [theme_image_pattern.format(name) for name in new_theme_names]
@@ -349,7 +371,11 @@ else:
     st.markdown("### Select an Artist Poster Theme")
 
     current_poster_theme = st.session_state.get("poster_theme", "terracotta")
-    default_index = new_theme_names.index(current_poster_theme) if current_poster_theme in new_theme_names else 0
+    default_index = (
+        new_theme_names.index(current_poster_theme)
+        if current_poster_theme in new_theme_names
+        else 0
+    )
 
     selected_theme_index = image_select(
         "",
@@ -357,30 +383,33 @@ else:
         captions=[name.replace("_", " ").title() for name in new_theme_names],
         index=default_index,
         return_value="index",
-        key="poster_theme_image_select"
+        key="poster_theme_image_select",
     )
 
     selected_new_theme = new_theme_names[selected_theme_index]
     st.session_state["poster_theme"] = selected_new_theme
     style = selected_new_theme
 
-
-
     if st.button("🔍 View selected theme in full screen", key="view_fullscreen_poster"):
-        show_fullscreen_image(theme_image_fp_safe[selected_theme_index], style.replace("_", " ").title())
+        show_fullscreen_image(
+            theme_image_fp_safe[selected_theme_index], style.replace("_", " ").title()
+        )
 
     theme_file_path = new_themes_dir / f"{selected_new_theme}.json"
     if theme_file_path.exists():
         with open(theme_file_path, "r", encoding="utf-8") as f:
             try:
                 t_data = json.load(f)
-                st.info(f"🎨 **{t_data.get('name', selected_new_theme)}**: {t_data.get('description', 'No description available.')}")
+                st.info(
+                    f"🎨 **{t_data.get('name', selected_new_theme)}**: {t_data.get('description', 'No description available.')}"
+                )
             except Exception:
                 pass
 
 
-
-input_mode = st.radio("Select Input Mode", ["Enter Address", "Draw on Map"], horizontal=True)
+input_mode = st.radio(
+    "Select Input Mode", ["Enter Address", "Draw on Map"], horizontal=True
+)
 
 drawings = None
 if input_mode == "Draw on Map":
@@ -401,13 +430,12 @@ if input_mode == "Draw on Map":
             "marker": False,
             "circlemarker": False,
         },
-        edit_options={"edit": False}
+        edit_options={"edit": False},
     )
     m.add_child(draw)
     map_data = st_folium(m, width="100%", height=400)
     if map_data:
         drawings = map_data.get("all_drawings")
-
 
 
 form = st.form(key="form_settings")
@@ -418,8 +446,15 @@ if input_mode == "Enter Address":
         "Location address",
         key="address",
     )
-    if address and (address.startswith("http://") or address.startswith("https://") or "localhost:" in address or "#" in address):
-        col1.warning("⚠️ It looks like your browser autofilled the page URL here. Please type a valid location address instead (e.g. 'Paris').")
+    if address and (
+        address.startswith("http://")
+        or address.startswith("https://")
+        or "localhost:" in address
+        or "#" in address
+    ):
+        col1.warning(
+            "⚠️ It looks like your browser autofilled the page URL here. Please type a valid location address instead (e.g. 'Paris')."
+        )
     radius = col2.slider(
         "Radius (meter)",
         100,
@@ -447,8 +482,15 @@ if theme_category == "Classic (Customizable)":
         key="shape",
     )
 
-    bg_shape_options = ["rectangle", "circle", "match the image", None] if input_mode == "Draw on Map" else ["rectangle", "circle", None]
-    if "bg_shape" in st.session_state and st.session_state.bg_shape not in bg_shape_options:
+    bg_shape_options = (
+        ["rectangle", "circle", "match the image", None]
+        if input_mode == "Draw on Map"
+        else ["rectangle", "circle", None]
+    )
+    if (
+        "bg_shape" in st.session_state
+        and st.session_state.bg_shape not in bg_shape_options
+    ):
         st.session_state.bg_shape = "rectangle"
     col1style.markdown("---")
     contour_color = col1style.color_picker(
@@ -493,7 +535,9 @@ if theme_category == "Classic (Customizable)":
     bg_settings["ec"] = bg_ec
 
     default_bg_hatch = bg_settings.get("hatch", "")
-    bg_hatch = bg3.text_input("Hatch (bg)", value=default_bg_hatch, key=f"{style}_bg_hatch")
+    bg_hatch = bg3.text_input(
+        "Hatch (bg)", value=default_bg_hatch, key=f"{style}_bg_hatch"
+    )
     if bg_hatch:
         bg_settings["hatch"] = bg_hatch
     elif "hatch" in bg_settings:
@@ -501,7 +545,9 @@ if theme_category == "Classic (Customizable)":
 
     default_bg_hatch_c = bg_settings.get("hatch_c", default_bg_ec)
     if bg_hatch:
-        bg_hatch_c = bg4.color_picker("Hatch Color (bg)", value=default_bg_hatch_c, key=f"{style}_bg_hatch_c")
+        bg_hatch_c = bg4.color_picker(
+            "Hatch Color (bg)", value=default_bg_hatch_c, key=f"{style}_bg_hatch_c"
+        )
         bg_settings["hatch_c"] = bg_hatch_c
     elif "hatch_c" in bg_settings:
         del bg_settings["hatch_c"]
@@ -512,6 +558,7 @@ if theme_category == "Classic (Customizable)":
     layer_expander.markdown("---")
 
     from prettymapp.settings import LANDCOVER_CLASSES
+
     for lc_class in LANDCOVER_CLASSES.keys():
         class_settings = draw_settings.get(lc_class, {})
         layer_expander.markdown(f"**{lc_class.capitalize()}**")
@@ -521,10 +568,19 @@ if theme_category == "Classic (Customizable)":
         if "cmap" in class_settings:
             default_fc = class_settings["cmap"][0]
 
-        is_fc_trans = (default_fc == "None")
-        if c1.checkbox(f"Fill ({lc_class})", value=not is_fc_trans, key=f"{style}_{lc_class}_fill_cb"):
-            if is_fc_trans: default_fc = "#FFFFFF"
-            fc = c1.color_picker(f"Face Color ({lc_class})", value=default_fc, key=f"{style}_{lc_class}_fc")
+        is_fc_trans = default_fc == "None"
+        if c1.checkbox(
+            f"Fill ({lc_class})",
+            value=not is_fc_trans,
+            key=f"{style}_{lc_class}_fill_cb",
+        ):
+            if is_fc_trans:
+                default_fc = "#FFFFFF"
+            fc = c1.color_picker(
+                f"Face Color ({lc_class})",
+                value=default_fc,
+                key=f"{style}_{lc_class}_fc",
+            )
             class_settings["fc"] = fc
         else:
             class_settings["fc"] = "None"
@@ -533,29 +589,54 @@ if theme_category == "Classic (Customizable)":
             del class_settings["cmap"]
 
         default_ec = class_settings.get("ec", "#000000")
-        is_ec_trans = (default_ec == "None")
-        if c2.checkbox(f"Outline ({lc_class})", value=not is_ec_trans, key=f"{style}_{lc_class}_ec_cb"):
-            if is_ec_trans: default_ec = "#000000"
-            ec = c2.color_picker(f"Edge Color ({lc_class})", value=default_ec, key=f"{style}_{lc_class}_ec")
+        is_ec_trans = default_ec == "None"
+        if c2.checkbox(
+            f"Outline ({lc_class})",
+            value=not is_ec_trans,
+            key=f"{style}_{lc_class}_ec_cb",
+        ):
+            if is_ec_trans:
+                default_ec = "#000000"
+            ec = c2.color_picker(
+                f"Edge Color ({lc_class})",
+                value=default_ec,
+                key=f"{style}_{lc_class}_ec",
+            )
             class_settings["ec"] = ec
         else:
             class_settings["ec"] = "None"
 
         default_lw = float(class_settings.get("lw", 0.0))
-        lw = c3.number_input(f"Width ({lc_class})", value=default_lw, min_value=0.0, max_value=10.0, step=0.5, key=f"{style}_{lc_class}_lw")
+        lw = c3.number_input(
+            f"Width ({lc_class})",
+            value=default_lw,
+            min_value=0.0,
+            max_value=10.0,
+            step=0.5,
+            key=f"{style}_{lc_class}_lw",
+        )
         class_settings["lw"] = lw
 
         default_hatch = class_settings.get("hatch", "")
-        if default_hatch is None: default_hatch = ""
-        hatch = c4.text_input(f"Hatch ({lc_class})", value=default_hatch, key=f"{style}_{lc_class}_hatch")
+        if default_hatch is None:
+            default_hatch = ""
+        hatch = c4.text_input(
+            f"Hatch ({lc_class})", value=default_hatch, key=f"{style}_{lc_class}_hatch"
+        )
         if hatch:
             class_settings["hatch"] = hatch
             default_hatch_c = class_settings.get("hatch_c", "#000000")
-            hatch_c = c4.color_picker(f"Hatch Color ({lc_class})", value=default_hatch_c, key=f"{style}_{lc_class}_hatch_c")
+            hatch_c = c4.color_picker(
+                f"Hatch Color ({lc_class})",
+                value=default_hatch_c,
+                key=f"{style}_{lc_class}_hatch_c",
+            )
             class_settings["hatch_c"] = hatch_c
         else:
-            if "hatch" in class_settings: del class_settings["hatch"]
-            if "hatch_c" in class_settings: del class_settings["hatch_c"]
+            if "hatch" in class_settings:
+                del class_settings["hatch"]
+            if "hatch_c" in class_settings:
+                del class_settings["hatch_c"]
 
         draw_settings[lc_class] = class_settings
 else:
@@ -570,8 +651,13 @@ else:
 
     poster_size = col1style.selectbox(
         "Poster Dimensions",
-        options=["Portrait Poster (12x16 in)", "Standard Large (18x24 in)", "Square Poster (12x12 in)", "Landscape Poster (16x12 in)"],
-        key="poster_size_selection"
+        options=[
+            "Portrait Poster (12x16 in)",
+            "Standard Large (18x24 in)",
+            "Square Poster (12x12 in)",
+            "Landscape Poster (16x12 in)",
+        ],
+        key="poster_size_selection",
     )
     size_map = {
         "Portrait Poster (12x16 in)": (12, 16),
@@ -581,18 +667,28 @@ else:
     }
     st.session_state["poster_size_val"] = size_map[poster_size]
 
-    st.session_state["draw_buildings_val"] = col2style.checkbox("Draw Buildings", value=False, key="draw_buildings")
-    st.session_state["draw_transit_val"] = col2style.checkbox("Draw Transit Lines", value=False, key="draw_transit")
-    st.session_state["draw_contours_val"] = col2style.checkbox("Draw Topography Contours", value=False, key="draw_contours")
+    st.session_state["draw_buildings_val"] = col2style.checkbox(
+        "Draw Buildings", value=False, key="draw_buildings"
+    )
+    st.session_state["draw_transit_val"] = col2style.checkbox(
+        "Draw Transit Lines", value=False, key="draw_transit"
+    )
+    st.session_state["draw_contours_val"] = col2style.checkbox(
+        "Draw Topography Contours", value=False, key="draw_contours"
+    )
 
     form_right.markdown("### 🎨 Artist Theme")
-    form_right.info("ℹ Map shape, layers, outlines, and colors are automatically designed and optimized by the artist for this theme.")
+    form_right.info(
+        "ℹ Map shape, layers, outlines, and colors are automatically designed and optimized by the artist for this theme."
+    )
 
 submitted = form.form_submit_button(label="Generate Map")
 
 if submitted:
     with st.spinner("Creating map... (may take up to a minute)"):
-        rectangular = True if theme_category == "Poster (Artist Themes)" else (shape != "circle")
+        rectangular = (
+            True if theme_category == "Poster (Artist Themes)" else (shape != "circle")
+        )
 
         if input_mode == "Draw on Map":
             if not drawings:
@@ -608,14 +704,21 @@ if submitted:
                 geom = drawing["geometry"]
                 if geom["type"] in ["Polygon", "MultiPolygon"]:
                     polygons.append(shapely_shape(geom))
-                elif geom["type"] == "Point" and "radius" in drawing.get("properties", {}):
+                elif geom["type"] == "Point" and "radius" in drawing.get(
+                    "properties", {}
+                ):
                     import osmnx as ox
+
                     lon, lat = geom["coordinates"]
                     radius_m = drawing["properties"]["radius"]
                     point_series = gp.GeoSeries([shapely_shape(geom)], crs="EPSG:4326")
-                    point_utm = ox.projection.project_gdf(gp.GeoDataFrame(geometry=point_series))
+                    point_utm = ox.projection.project_gdf(
+                        gp.GeoDataFrame(geometry=point_series)
+                    )
                     circle_utm = point_utm.buffer(radius_m)
-                    circle_wgs = ox.projection.project_gdf(gp.GeoDataFrame(geometry=circle_utm), to_crs="EPSG:4326")
+                    circle_wgs = ox.projection.project_gdf(
+                        gp.GeoDataFrame(geometry=circle_utm), to_crs="EPSG:4326"
+                    )
                     polygons.append(circle_wgs.geometry.iloc[0])
 
             if not polygons:
@@ -625,8 +728,15 @@ if submitted:
             combined_poly = unary_union(polygons)
             aoi = combined_poly
         else:
-            if address and (address.startswith("http://") or address.startswith("https://") or "localhost:" in address or "#" in address):
-                st.error("⚠️ Error: It looks like your browser autofilled the URL of this page into the location input. Please enter a valid location address or city name instead (e.g. 'Paris').")
+            if address and (
+                address.startswith("http://")
+                or address.startswith("https://")
+                or "localhost:" in address
+                or "#" in address
+            ):
+                st.error(
+                    "⚠️ Error: It looks like your browser autofilled the URL of this page into the location input. Please enter a valid location address or city name instead (e.g. 'Paris')."
+                )
                 st.stop()
             try:
                 aoi = get_aoi(address=address, radius=radius, rectangular=rectangular)
@@ -670,8 +780,11 @@ if submitted:
                 if "current_poster_bytes" in st.session_state:
                     del st.session_state["current_poster_bytes"]
             except Exception as e:
-                st.error(f"ERROR: Could not render the map for this area. Please try again. {e}")
+                st.error(
+                    f"ERROR: Could not render the map for this area. Please try again. {e}"
+                )
                 import traceback
+
                 st.error(traceback.format_exc())
                 st.stop()
         else:
@@ -682,17 +795,27 @@ if submitted:
                 from prettymapp.geo import get_utm_crs
                 import geopandas as gp
                 from shapely.geometry import Point as ShapelyPoint
-                gdf_pt = gp.GeoDataFrame(geometry=[ShapelyPoint(point[1], point[0])], crs="EPSG:4326")
+
+                gdf_pt = gp.GeoDataFrame(
+                    geometry=[ShapelyPoint(point[1], point[0])], crs="EPSG:4326"
+                )
                 utm_crs = get_utm_crs(point[0], point[1])
                 gdf_pt_utm = gdf_pt.to_crs(utm_crs)
-                gdf_aoi_utm = gp.GeoDataFrame(geometry=[aoi], crs="EPSG:4326").to_crs(utm_crs)
-                dist = int(gdf_aoi_utm.geometry.iloc[0].centroid.distance(gdf_aoi_utm.geometry.iloc[0].boundary).max())
+                gdf_aoi_utm = gp.GeoDataFrame(geometry=[aoi], crs="EPSG:4326").to_crs(
+                    utm_crs
+                )
+                dist = int(
+                    gdf_aoi_utm.geometry.iloc[0]
+                    .centroid.distance(gdf_aoi_utm.geometry.iloc[0].boundary)
+                    .max()
+                )
                 dist = max(min(dist, 1500), 100)
             else:
                 dist = radius
 
             import sys
             from pathlib import Path
+
             _HERE = Path(__file__).resolve().parent
             sys.path.append(str(_HERE.parent / "poster_generator"))
             from create_map_poster import create_poster, load_theme
@@ -754,40 +877,122 @@ if submitted:
                 st.session_state["last_draw_buildings"] = draw_buildings_val
                 st.session_state["last_draw_transit"] = draw_transit_val
                 st.session_state["last_draw_contours"] = draw_contours_val
-                st.session_state["last_poster_show_text"] = st.session_state["poster_show_text"]
+                st.session_state["last_poster_show_text"] = st.session_state[
+                    "poster_show_text"
+                ]
                 st.session_state["current_fig"] = None
             except Exception as e:
-                st.error(f"ERROR: Could not generate the map poster. Please try again. {e}")
+                st.error(
+                    f"ERROR: Could not generate the map poster. Please try again. {e}"
+                )
                 import traceback
+
                 st.error(traceback.format_exc())
                 st.stop()
 
-if theme_category == "Classic (Customizable)" and st.session_state.get("current_fig") is not None:
+if (
+    theme_category == "Classic (Customizable)"
+    and st.session_state.get("current_fig") is not None
+):
     st.markdown("---")
     st.markdown("### 🎨 Live Title Settings")
     t_col1, t_col2 = st.columns(2)
-    name_on = t_col1.checkbox("Display title", value=True, help="If checked, adds the selected address as the title.", key="name_on")
-    custom_title = t_col1.text_input("Custom title (optional)", max_chars=30, key="custom_title")
-    font_size = t_col1.slider("Title font size", min_value=1, max_value=50, value=25, key="font_size")
-    font_color = t_col1.color_picker("Title font color", value="#2F3737", key="font_color")
+    name_on = t_col1.checkbox(
+        "Display title",
+        value=True,
+        help="If checked, adds the selected address as the title.",
+        key="name_on",
+    )
+    custom_title = t_col1.text_input(
+        "Custom title (optional)", max_chars=30, key="custom_title"
+    )
+    font_size = t_col1.slider(
+        "Title font size", min_value=1, max_value=50, value=25, key="font_size"
+    )
+    font_color = t_col1.color_picker(
+        "Title font color", value="#2F3737", key="font_color"
+    )
 
-    text_design = t_col2.selectbox("Text Design", options=["Straight", "Circular", "Wave", "Staircase", "Spiral"], index=0, key="text_design")
-    text_x = t_col2.slider("Title X Position (%)", -100, 100, value=47, help="0 is center, -50 is left, 50 is right", key="text_x")
-    text_y = t_col2.slider("Title Y Position (%)", -100, 100, value=-47, help="0 is center, -50 is bottom, 50 is top", key="text_y")
-    text_rotation = t_col2.slider("Title Rotation (degrees)", -360, 360, value=0, key="text_rotation")
+    text_design = t_col2.selectbox(
+        "Text Design",
+        options=["Straight", "Circular", "Wave", "Staircase", "Spiral"],
+        index=0,
+        key="text_design",
+    )
+    text_x = t_col2.slider(
+        "Title X Position (%)",
+        -100,
+        100,
+        value=47,
+        help="0 is center, -50 is left, 50 is right",
+        key="text_x",
+    )
+    text_y = t_col2.slider(
+        "Title Y Position (%)",
+        -100,
+        100,
+        value=-47,
+        help="0 is center, -50 is bottom, 50 is top",
+        key="text_y",
+    )
+    text_rotation = t_col2.slider(
+        "Title Rotation (degrees)", -360, 360, value=0, key="text_rotation"
+    )
 
     intensity = 1.0
     frequency = 1.0
     if text_design == "Circular":
-        intensity = t_col2.slider("Character Spacing", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="intensity_circ")
+        intensity = t_col2.slider(
+            "Character Spacing",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="intensity_circ",
+        )
     elif text_design == "Wave":
-        intensity = t_col2.slider("Wave Amplitude", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="intensity_wave")
-        frequency = t_col2.slider("Wave Frequency", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="frequency_wave")
+        intensity = t_col2.slider(
+            "Wave Amplitude",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="intensity_wave",
+        )
+        frequency = t_col2.slider(
+            "Wave Frequency",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="frequency_wave",
+        )
     elif text_design == "Staircase":
-        intensity = t_col2.slider("Step Height", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="intensity_stair")
+        intensity = t_col2.slider(
+            "Step Height",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="intensity_stair",
+        )
     elif text_design == "Spiral":
-        intensity = t_col2.slider("Spiral Tightness", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="intensity_spiral")
-        frequency = t_col2.slider("Character Spacing", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="frequency_spiral")
+        intensity = t_col2.slider(
+            "Spiral Tightness",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="intensity_spiral",
+        )
+        frequency = t_col2.slider(
+            "Character Spacing",
+            min_value=0.1,
+            max_value=5.0,
+            value=1.0,
+            step=0.1,
+            key="frequency_spiral",
+        )
 
     fig = st.session_state.current_fig
     df = st.session_state.current_df
@@ -812,6 +1017,7 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
         import matplotlib.font_manager as fm
         import prettymapp
         import math
+
         _location_ = Path(prettymapp.__file__).resolve().parent
         fpath = _location_ / "fonts" / "PermanentMarker-Regular.ttf"
         fontproperties = fm.FontProperties(fname=fpath.resolve())
@@ -821,9 +1027,16 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
 
         if text_design == "Straight":
             ax.text(
-                x=x_base, y=y_base, s=display_title,
-                color=font_color, zorder=99, ha="center", va="center",
-                rotation=text_rotation * -1, fontproperties=fontproperties, size=font_size
+                x=x_base,
+                y=y_base,
+                s=display_title,
+                color=font_color,
+                zorder=99,
+                ha="center",
+                va="center",
+                rotation=text_rotation * -1,
+                fontproperties=fontproperties,
+                size=font_size,
             )
         elif text_design == "Circular":
             dx = text_x
@@ -835,17 +1048,40 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
             r_avg = (rx + ry) / 2
 
             if r_avg == 0:
-                ax.text(xmid, ymid, display_title, color=font_color, zorder=99, ha="center", va="center", fontproperties=fontproperties, size=font_size)
+                ax.text(
+                    xmid,
+                    ymid,
+                    display_title,
+                    color=font_color,
+                    zorder=99,
+                    ha="center",
+                    va="center",
+                    fontproperties=fontproperties,
+                    size=font_size,
+                )
             else:
                 char_spacing = ((font_size * xdif / 350) / r_avg) * intensity
                 total_angle = len(display_title) * char_spacing
-                start_angle = angle_rad + (total_angle / 2) + math.radians(text_rotation * -1)
+                start_angle = (
+                    angle_rad + (total_angle / 2) + math.radians(text_rotation * -1)
+                )
                 for i, char in enumerate(display_title):
                     theta = start_angle - i * char_spacing
                     x_c = xmid + rx * math.cos(theta)
                     y_c = ymid + ry * math.sin(theta)
                     rot = math.degrees(theta) - 90
-                    ax.text(x_c, y_c, char, color=font_color, zorder=99, ha="center", va="center", rotation=rot, fontproperties=fontproperties, size=font_size)
+                    ax.text(
+                        x_c,
+                        y_c,
+                        char,
+                        color=font_color,
+                        zorder=99,
+                        ha="center",
+                        va="center",
+                        rotation=rot,
+                        fontproperties=fontproperties,
+                        size=font_size,
+                    )
         elif text_design == "Wave":
             amp = (font_size / 300) * ydif * intensity
             char_width = (font_size / 800) * xdif
@@ -861,7 +1097,18 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
                 dx_pt, dy_pt = raw_x - x_base, raw_y - y_base
                 x_c = x_base + (dx_pt * cos_a - dy_pt * sin_a)
                 y_c = y_base + (dx_pt * sin_a + dy_pt * cos_a)
-                ax.text(x_c, y_c, char, color=font_color, zorder=99, ha="center", va="center", rotation=text_rotation * -1, fontproperties=fontproperties, size=font_size)
+                ax.text(
+                    x_c,
+                    y_c,
+                    char,
+                    color=font_color,
+                    zorder=99,
+                    ha="center",
+                    va="center",
+                    rotation=text_rotation * -1,
+                    fontproperties=fontproperties,
+                    size=font_size,
+                )
         elif text_design == "Staircase":
             char_width = (font_size / 800) * xdif
             char_height = ((font_size / 800) * ydif) * intensity
@@ -878,7 +1125,18 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
                 dx_pt, dy_pt = raw_x - x_base, raw_y - y_base
                 x_c = x_base + (dx_pt * cos_a - dy_pt * sin_a)
                 y_c = y_base + (dx_pt * sin_a + dy_pt * cos_a)
-                ax.text(x_c, y_c, char, color=font_color, zorder=99, ha="center", va="center", rotation=text_rotation * -1, fontproperties=fontproperties, size=font_size)
+                ax.text(
+                    x_c,
+                    y_c,
+                    char,
+                    color=font_color,
+                    zorder=99,
+                    ha="center",
+                    va="center",
+                    rotation=text_rotation * -1,
+                    fontproperties=fontproperties,
+                    size=font_size,
+                )
         elif text_design == "Spiral":
             base_r = (font_size / 2000) * xdif
             char_spacing = 0.5 * frequency
@@ -889,7 +1147,18 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
                 x_c = x_base + r * math.cos(theta)
                 y_c = y_base + r * math.sin(theta)
                 rot = math.degrees(theta) - 90
-                ax.text(x_c, y_c, char, color=font_color, zorder=99, ha="center", va="center", rotation=rot, fontproperties=fontproperties, size=font_size)
+                ax.text(
+                    x_c,
+                    y_c,
+                    char,
+                    color=font_color,
+                    zorder=99,
+                    ha="center",
+                    va="center",
+                    rotation=rot,
+                    fontproperties=fontproperties,
+                    size=font_size,
+                )
 
     with st.expander("Export image"):
         img_format = st.selectbox(
@@ -910,6 +1179,7 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
             if img_format == "svg":
                 return plt_to_svg(fig)
             import io
+
             buf = io.BytesIO()
             savefig_kwargs = dict(
                 format=img_format,
@@ -979,7 +1249,9 @@ if theme_category == "Classic (Customizable)" and st.session_state.get("current_
     with ex2.expander("Export map configuration"):
         st.write(config)
 
-elif theme_category == "Poster (Artist Themes)" and st.session_state.get("poster_generated"):
+elif theme_category == "Poster (Artist Themes)" and st.session_state.get(
+    "poster_generated"
+):
     st.markdown("---")
     st.markdown("### 🎨 Live Poster Settings")
     t_col1, t_col2 = st.columns(2)
@@ -987,28 +1259,55 @@ elif theme_category == "Poster (Artist Themes)" and st.session_state.get("poster
     city_default = st.session_state.get("poster_city_name", "")
     country_default = st.session_state.get("poster_country_name", "")
 
-    custom_title_val = t_col1.text_input("Custom Title (City)", value=st.session_state.get("poster_custom_title", city_default), key="poster_custom_title_input")
-    custom_subtitle_val = t_col1.text_input("Custom Subtitle (Country)", value=st.session_state.get("poster_custom_subtitle", country_default), key="poster_custom_subtitle_input")
+    custom_title_val = t_col1.text_input(
+        "Custom Title (City)",
+        value=st.session_state.get("poster_custom_title", city_default),
+        key="poster_custom_title_input",
+    )
+    custom_subtitle_val = t_col1.text_input(
+        "Custom Subtitle (Country)",
+        value=st.session_state.get("poster_custom_subtitle", country_default),
+        key="poster_custom_subtitle_input",
+    )
 
     import sys
     from pathlib import Path
+
     _HERE = Path(__file__).resolve().parent
     sys.path.append(str(_HERE.parent / "poster_generator"))
     from create_map_poster import load_theme
+
     theme_dict = load_theme(st.session_state.get("poster_theme", "terracotta"))
-    is_blueprint = (theme_dict.get("layout") == "blueprint")
+    is_blueprint = theme_dict.get("layout") == "blueprint"
 
     if is_blueprint:
         show_text_val = True
-        t_col1.checkbox("Display title & text", value=True, disabled=True, key="poster_show_text_checkbox_blueprint", help="In blueprint layouts, titles and dimensions are always displayed.")
+        t_col1.checkbox(
+            "Display title & text",
+            value=True,
+            disabled=True,
+            key="poster_show_text_checkbox_blueprint",
+            help="In blueprint layouts, titles and dimensions are always displayed.",
+        )
     else:
-        show_text_val = t_col1.checkbox("Display title & text", value=st.session_state.get("poster_show_text", True), key="poster_show_text_checkbox_main")
+        show_text_val = t_col1.checkbox(
+            "Display title & text",
+            value=st.session_state.get("poster_show_text", True),
+            key="poster_show_text_checkbox_main",
+        )
 
     if not is_blueprint:
-        text_position_val = t_col2.selectbox("Text Position", options=["Bottom", "Top"], index=0, key="text_position_select")
+        text_position_val = t_col2.selectbox(
+            "Text Position",
+            options=["Bottom", "Top"],
+            index=0,
+            key="text_position_select",
+        )
     else:
         text_position_val = "Bottom"
-        t_col2.info("ℹ In blueprint layout, title text is only available at the top location.")
+        t_col2.info(
+            "ℹ In blueprint layout, title text is only available at the top location."
+        )
 
     changed = False
     if st.session_state.get("poster_custom_title") != custom_title_val:
@@ -1125,7 +1424,10 @@ elif theme_category == "Poster (Artist Themes)" and st.session_state.get("poster
                 }
                 st.session_state["poster_prepared_export"] = prepared_poster_export
 
-        if prepared_poster_export and prepared_poster_export.get("signature") == poster_export_signature:
+        if (
+            prepared_poster_export
+            and prepared_poster_export.get("signature") == poster_export_signature
+        ):
             st.download_button(
                 label="Download Poster",
                 data=prepared_poster_export["data"],

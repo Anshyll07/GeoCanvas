@@ -171,8 +171,18 @@ class Plot:
                 if "fc" in draw_settings_class:
                     draw_settings_class["ec"] = draw_settings_class.pop("fc")
                 # Filter to only keep valid LineCollection properties to avoid AttributeError
-                valid_line_keys = ["ec", "edgecolors", "lw", "linewidths", "alpha", "zorder", "label"]
-                draw_settings_class = {k: v for k, v in draw_settings_class.items() if k in valid_line_keys}
+                valid_line_keys = [
+                    "ec",
+                    "edgecolors",
+                    "lw",
+                    "linewidths",
+                    "alpha",
+                    "zorder",
+                    "label",
+                ]
+                draw_settings_class = {
+                    k: v for k, v in draw_settings_class.items() if k in valid_line_keys
+                }
                 linecollection = plot_linestring_collection(
                     ax=self.ax, geoms=df_class.geometry, **draw_settings_class
                 )
@@ -245,7 +255,10 @@ class Plot:
                 patch = PathPatch(
                     MplPath.make_compound_path(
                         MplPath(np.asarray(poly.exterior.coords)[:, :2]),
-                        *[MplPath(np.asarray(ring.coords)[:, :2]) for ring in poly.interiors],
+                        *[
+                            MplPath(np.asarray(ring.coords)[:, :2])
+                            for ring in poly.interiors
+                        ],
                     ),
                     facecolor="None",
                     lw=self.contour_width,
@@ -265,7 +278,7 @@ class Plot:
 
         kwargs = {
             "facecolor": fc,
-            "ec": hatch_c, # matplotlib uses ec for hatch color
+            "ec": hatch_c,  # matplotlib uses ec for hatch color
             "hatch": hatch if hatch else None,
             "zorder": -1,
             "clip_on": True,
@@ -276,10 +289,10 @@ class Plot:
                 xy=(self.xmin - self.bg_buffer_x, self.ymin - self.bg_buffer_y),
                 width=self.xdif + 2 * self.bg_buffer_x,
                 height=self.ydif + 2 * self.bg_buffer_y,
-                **kwargs
+                **kwargs,
             )
             self.ax.add_patch(patch)
-            
+
             # If we used hatch_c as ec for hatch color, we might want the actual boundary ec.
             # But the boundary of the background is usually outside the view or we can just draw another outline.
             # We'll just keep it simple.
@@ -290,7 +303,7 @@ class Plot:
                 xy=(self.xmid, self.ymid),  # centroid
                 width=self.xdif + 2 * self.bg_buffer_x,
                 height=self.ydif + 2 * self.bg_buffer_y,
-                **kwargs
+                **kwargs,
             )
             self.ax.add_artist(ellipse)
 
@@ -301,17 +314,20 @@ class Plot:
                 geoms = buffered_geom.geoms
             else:
                 geoms = [buffered_geom]
-            
+
             for poly in geoms:
                 patch = PathPatch(
                     MplPath.make_compound_path(
                         MplPath(np.asarray(poly.exterior.coords)[:, :2]),
-                        *[MplPath(np.asarray(ring.coords)[:, :2]) for ring in poly.interiors],
+                        *[
+                            MplPath(np.asarray(ring.coords)[:, :2])
+                            for ring in poly.interiors
+                        ],
                     ),
-                    **kwargs
+                    **kwargs,
                 )
                 self.ax.add_patch(patch)
-        
+
         # Draw a separate boundary if ec != hatch_c
         if ec != hatch_c:
             outline_kwargs = {
@@ -322,32 +338,40 @@ class Plot:
                 "clip_on": True,
             }
             if self.bg_shape == "rectangle":
-                self.ax.add_patch(Rectangle(
-                    xy=(self.xmin - self.bg_buffer_x, self.ymin - self.bg_buffer_y),
-                    width=self.xdif + 2 * self.bg_buffer_x,
-                    height=self.ydif + 2 * self.bg_buffer_y,
-                    **outline_kwargs
-                ))
+                self.ax.add_patch(
+                    Rectangle(
+                        xy=(self.xmin - self.bg_buffer_x, self.ymin - self.bg_buffer_y),
+                        width=self.xdif + 2 * self.bg_buffer_x,
+                        height=self.ydif + 2 * self.bg_buffer_y,
+                        **outline_kwargs,
+                    )
+                )
             elif self.bg_shape == "circle":
-                self.ax.add_artist(Ellipse(
-                    xy=(self.xmid, self.ymid),
-                    width=self.xdif + 2 * self.bg_buffer_x,
-                    height=self.ydif + 2 * self.bg_buffer_y,
-                    **outline_kwargs
-                ))
+                self.ax.add_artist(
+                    Ellipse(
+                        xy=(self.xmid, self.ymid),
+                        width=self.xdif + 2 * self.bg_buffer_x,
+                        height=self.ydif + 2 * self.bg_buffer_y,
+                        **outline_kwargs,
+                    )
+                )
             elif self.bg_shape == "match the image" and self.aoi_geometry is not None:
                 for poly in geoms:
-                    self.ax.add_patch(PathPatch(
-                        MplPath.make_compound_path(
-                            MplPath(np.asarray(poly.exterior.coords)[:, :2]),
-                            *[MplPath(np.asarray(ring.coords)[:, :2]) for ring in poly.interiors],
-                        ),
-                        **outline_kwargs
-                    ))
+                    self.ax.add_patch(
+                        PathPatch(
+                            MplPath.make_compound_path(
+                                MplPath(np.asarray(poly.exterior.coords)[:, :2]),
+                                *[
+                                    MplPath(np.asarray(ring.coords)[:, :2])
+                                    for ring in poly.interiors
+                                ],
+                            ),
+                            **outline_kwargs,
+                        )
+                    )
 
         # re-enable patch for background color that is deactivated with axis
         self.ax.patch.set_zorder(-1)
-
 
     def set_name(self):
         x = self.xmid + self.text_x / 100 * self.xdif

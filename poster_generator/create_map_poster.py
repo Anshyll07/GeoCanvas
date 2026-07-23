@@ -13,6 +13,7 @@ import json
 import os
 import pickle
 import sys
+
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -67,7 +68,7 @@ WATERCOLOR_PALETTE = [
     {"fill": "#C5CCB6", "stroke": "#A6B093"},  # Soft olive green (derived from #333C29)
     {"fill": "#B5C8C1", "stroke": "#91AEA3"},  # Soft teal/blue (derived from #7BBBA6)
     {"fill": "#EFEADF", "stroke": "#DDD3BE"},  # Light cream
-    {"fill": "#D9CBA9", "stroke": "#C2AF84"}   # Warm sand/gold
+    {"fill": "#D9CBA9", "stroke": "#C2AF84"},  # Warm sand/gold
 ]
 
 DEEP_OCEAN = "#436359"  # Dark vintage green-teal
@@ -75,11 +76,10 @@ SHALLOW_WATER_GRADIENT = [
     "#4D6D63",  # Deep intermediate
     "#5A7C71",  # Intermediate
     "#6A8D82",  # Shallow
-    "#7BBBA6"   # Coastline shallow (New York map water color!)
+    "#7BBBA6",  # Coastline shallow (New York map water color!)
 ]
 
 INK_COLOR = "#1C1917"  # Soft charcoal black (matching New York lines)
-
 
 
 def _cache_path(key: str) -> str:
@@ -186,8 +186,24 @@ def draw_compass_rose(ax, cx, cy, r, color, bg_color, font_props=None):
     import copy
 
     # 1. Draw outer double circles
-    circle_outer = patches.Circle((cx, cy), r, edgecolor=color, facecolor='none', linewidth=1.5, transform=ax.transAxes, zorder=12)
-    circle_inner = patches.Circle((cx, cy), r * 0.85, edgecolor=color, facecolor='none', linewidth=0.75, transform=ax.transAxes, zorder=12)
+    circle_outer = patches.Circle(
+        (cx, cy),
+        r,
+        edgecolor=color,
+        facecolor="none",
+        linewidth=1.5,
+        transform=ax.transAxes,
+        zorder=12,
+    )
+    circle_inner = patches.Circle(
+        (cx, cy),
+        r * 0.85,
+        edgecolor=color,
+        facecolor="none",
+        linewidth=0.75,
+        transform=ax.transAxes,
+        zorder=12,
+    )
     ax.add_patch(circle_outer)
     ax.add_patch(circle_inner)
 
@@ -197,17 +213,17 @@ def draw_compass_rose(ax, cx, cy, r, color, bg_color, font_props=None):
     r_sec = r * 0.65
 
     mains = [
-        (90, r, w_main),    # North
-        (0, r, w_main),     # East
-        (270, r, w_main),   # South
-        (180, r, w_main)    # West
+        (90, r, w_main),  # North
+        (0, r, w_main),  # East
+        (270, r, w_main),  # South
+        (180, r, w_main),  # West
     ]
 
     secs = [
-        (45, r_sec, w_sec),   # NE
+        (45, r_sec, w_sec),  # NE
         (315, r_sec, w_sec),  # SE
         (225, r_sec, w_sec),  # SW
-        (135, r_sec, w_sec)   # NW
+        (135, r_sec, w_sec),  # NW
     ]
 
     for theta_deg, L, W in mains + secs:
@@ -221,30 +237,31 @@ def draw_compass_rose(ax, cx, cy, r, color, bg_color, font_props=None):
         off_y = W * cos_t
 
         # Clockwise triangle (dark)
-        poly_dark = patches.Polygon([
-            (cx, cy),
-            (peak_x, peak_y),
-            (cx - off_x, cy - off_y)
-        ], facecolor=color, edgecolor=color, linewidth=0.5, transform=ax.transAxes, zorder=13)
+        poly_dark = patches.Polygon(
+            [(cx, cy), (peak_x, peak_y), (cx - off_x, cy - off_y)],
+            facecolor=color,
+            edgecolor=color,
+            linewidth=0.5,
+            transform=ax.transAxes,
+            zorder=13,
+        )
 
         # Counter-clockwise triangle (light/bg)
-        poly_light = patches.Polygon([
-            (cx, cy),
-            (peak_x, peak_y),
-            (cx + off_x, cy + off_y)
-        ], facecolor=bg_color, edgecolor=color, linewidth=0.5, transform=ax.transAxes, zorder=13)
+        poly_light = patches.Polygon(
+            [(cx, cy), (peak_x, peak_y), (cx + off_x, cy + off_y)],
+            facecolor=bg_color,
+            edgecolor=color,
+            linewidth=0.5,
+            transform=ax.transAxes,
+            zorder=13,
+        )
 
         ax.add_patch(poly_dark)
         ax.add_patch(poly_light)
 
     # 3. Add text labels N, S, E, W
     label_dist = r * 1.18
-    labels = [
-        ('N', 90),
-        ('E', 0),
-        ('S', 270),
-        ('W', 180)
-    ]
+    labels = [("N", 90), ("E", 0), ("S", 270), ("W", 180)]
 
     for text, deg in labels:
         rad = np.radians(deg)
@@ -253,12 +270,31 @@ def draw_compass_rose(ax, cx, cy, r, color, bg_color, font_props=None):
         if font_props:
             compass_font = copy.copy(font_props)
             compass_font.set_size(8)
-            compass_font.set_weight('bold')
-            ax.text(lx, ly, text, color=color, ha='center', va='center',
-                    fontproperties=compass_font, transform=ax.transAxes, zorder=14)
+            compass_font.set_weight("bold")
+            ax.text(
+                lx,
+                ly,
+                text,
+                color=color,
+                ha="center",
+                va="center",
+                fontproperties=compass_font,
+                transform=ax.transAxes,
+                zorder=14,
+            )
         else:
-            ax.text(lx, ly, text, color=color, ha='center', va='center',
-                    fontsize=8, fontweight='bold', transform=ax.transAxes, zorder=14)
+            ax.text(
+                lx,
+                ly,
+                text,
+                color=color,
+                ha="center",
+                va="center",
+                fontsize=8,
+                fontweight="bold",
+                transform=ax.transAxes,
+                zorder=14,
+            )
 
 
 def is_latin_script(text):
@@ -411,11 +447,11 @@ def get_edge_colors_by_type(g):
 
     for _u, _v, data in g.edges(data=True):
         # Get the highway type (can be a list or string)
-        highway = data.get('highway', 'unclassified')
+        highway = data.get("highway", "unclassified")
 
         # Handle list of highway types (take the first one)
         if isinstance(highway, list):
-            highway = highway[0] if highway else 'unclassified'
+            highway = highway[0] if highway else "unclassified"
 
         # Assign color based on road type
         if highway in ["motorway", "motorway_link"]:
@@ -429,7 +465,7 @@ def get_edge_colors_by_type(g):
         elif highway in ["residential", "living_street", "unclassified"]:
             color = THEME["road_residential"]
         else:
-            color = THEME['road_default']
+            color = THEME["road_default"]
 
         edge_colors.append(color)
 
@@ -444,10 +480,10 @@ def get_edge_widths_by_type(g):
     edge_widths = []
 
     for _u, _v, data in g.edges(data=True):
-        highway = data.get('highway', 'unclassified')
+        highway = data.get("highway", "unclassified")
 
         if isinstance(highway, list):
-            highway = highway[0] if highway else 'unclassified'
+            highway = highway[0] if highway else "unclassified"
 
         # Assign width based on road importance
         if THEME.get("layout") == "vintage":
@@ -530,6 +566,7 @@ def get_coordinates(city, country):
             print(e)
         return (location.latitude, location.longitude)
 
+
 def color_neighborhoods(gdf):
     """
     Greedy coloring algorithm to assign colors from WATERCOLOR_PALETTE
@@ -542,7 +579,7 @@ def color_neighborhoods(gdf):
         for j in range(i):
             if gdf.iloc[j].geometry.intersects(geom_i):
                 neighbors.append(colors[j])
-        
+
         # Find first color not used by neighbors
         for c in range(len(WATERCOLOR_PALETTE)):
             if c not in neighbors:
@@ -551,16 +588,35 @@ def color_neighborhoods(gdf):
         if colors[i] == -1:
             colors[i] = i % len(WATERCOLOR_PALETTE)
     return colors
+
+
 def draw_blueprint_grid(ax, grid_color="#FFFFFF", alpha=0.28):
     """
     Draw a fine technical grid across the axes.
     """
     # Vertical lines every 0.04 units
     for x in np.arange(0, 1.01, 0.04):
-        ax.plot([x, x], [0, 1], color=grid_color, alpha=alpha, linewidth=0.8, transform=ax.transAxes, zorder=0.1)
+        ax.plot(
+            [x, x],
+            [0, 1],
+            color=grid_color,
+            alpha=alpha,
+            linewidth=0.8,
+            transform=ax.transAxes,
+            zorder=0.1,
+        )
     # Horizontal lines every 0.04 units
     for y in np.arange(0, 1.01, 0.04):
-        ax.plot([0, 1], [y, y], color=grid_color, alpha=alpha, linewidth=0.8, transform=ax.transAxes, zorder=0.1)
+        ax.plot(
+            [0, 1],
+            [y, y],
+            color=grid_color,
+            alpha=alpha,
+            linewidth=0.8,
+            transform=ax.transAxes,
+            zorder=0.1,
+        )
+
 
 def get_crop_limits(g_proj, center_lat_lon, fig, dist):
     """
@@ -570,13 +626,9 @@ def get_crop_limits(g_proj, center_lat_lon, fig, dist):
     lat, lon = center_lat_lon
 
     # Project center point into graph CRS
-    center = (
-        ox.projection.project_geometry(
-            Point(lon, lat),
-            crs="EPSG:4326",
-            to_crs=g_proj.graph["crs"]
-        )[0]
-    )
+    center = ox.projection.project_geometry(
+        Point(lon, lat), crs="EPSG:4326", to_crs=g_proj.graph["crs"]
+    )[0]
     center_x, center_y = center.x, center.y
 
     fig_width, fig_height = fig.get_size_inches()
@@ -620,7 +672,13 @@ def fetch_graph(point, dist) -> MultiDiGraph | None:
         return cast(MultiDiGraph, cached)
 
     try:
-        g = ox.graph_from_point(point, dist=dist, dist_type='bbox', network_type='all', truncate_by_edge=True)
+        g = ox.graph_from_point(
+            point,
+            dist=dist,
+            dist_type="bbox",
+            network_type="all",
+            truncate_by_edge=True,
+        )
         # Rate limit between requests
         time.sleep(0.5)
         try:
@@ -723,9 +781,11 @@ def create_poster(
 
     # Progress bar for data fetching
     fetch_steps = 3
-    if draw_buildings: fetch_steps += 1
-    if draw_transit: fetch_steps += 1
-    
+    if draw_buildings:
+        fetch_steps += 1
+    if draw_transit:
+        fetch_steps += 1
+
     with tqdm(
         total=fetch_steps,
         desc="Fetching map data",
@@ -734,7 +794,9 @@ def create_poster(
     ) as pbar:
         # 1. Fetch Street Network
         pbar.set_description("Downloading street network")
-        compensated_dist = dist * (max(height, width) / min(height, width)) / 4  # To compensate for viewport crop
+        compensated_dist = (
+            dist * (max(height, width) / min(height, width)) / 4
+        )  # To compensate for viewport crop
         g = fetch_graph(point, compensated_dist)
         if g is None:
             raise RuntimeError("Failed to retrieve street network data.")
@@ -792,13 +854,25 @@ def create_poster(
         neighborhoods = fetch_features(
             point,
             compensated_dist,
-            tags={"place": ["suburb", "neighbourhood", "borough", "quarter", "town", "city_district"]},
-            name="neighborhoods"
+            tags={
+                "place": [
+                    "suburb",
+                    "neighbourhood",
+                    "borough",
+                    "quarter",
+                    "town",
+                    "city_district",
+                ]
+            },
+            name="neighborhoods",
         )
 
     # 2. Setup Plot
     print("Rendering map...")
-    fig, ax = plt.subplots(figsize=(width, height), facecolor=THEME["bg"] if not THEME.get("watercolor") else DEEP_OCEAN)
+    fig, ax = plt.subplots(
+        figsize=(width, height),
+        facecolor=THEME["bg"] if not THEME.get("watercolor") else DEEP_OCEAN,
+    )
     ax.set_facecolor(THEME["bg"] if not THEME.get("watercolor") else DEEP_OCEAN)
     ax.set_position((0.0, 0.0, 1.0, 1.0))
 
@@ -814,18 +888,27 @@ def create_poster(
         try:
             import srtm
             from pyproj import Transformer
+
             minx, maxx = crop_xlim
             miny, maxy = crop_ylim
 
-            transformer_back = Transformer.from_crs(g_proj.graph['crs'], "EPSG:4326", always_xy=True)
-            transformer_fwd = Transformer.from_crs("EPSG:4326", g_proj.graph['crs'], always_xy=True)
+            transformer_back = Transformer.from_crs(
+                g_proj.graph["crs"], "EPSG:4326", always_xy=True
+            )
+            transformer_fwd = Transformer.from_crs(
+                "EPSG:4326", g_proj.graph["crs"], always_xy=True
+            )
 
             lon_min, lat_min = transformer_back.transform(minx, miny)
             lon_max, lat_max = transformer_back.transform(maxx, maxy)
 
             # Generate grid (expand slightly to prevent edge cutoffs)
-            lats = np.linspace(min(lat_min, lat_max) - 0.01, max(lat_min, lat_max) + 0.01, 150)
-            lons = np.linspace(min(lon_min, lon_max) - 0.01, max(lon_min, lon_max) + 0.01, 150)
+            lats = np.linspace(
+                min(lat_min, lat_max) - 0.01, max(lat_min, lat_max) + 0.01, 150
+            )
+            lons = np.linspace(
+                min(lon_min, lon_max) - 0.01, max(lon_min, lon_max) + 0.01, 150
+            )
 
             elevation_data = srtm.get_data()
             Z = np.zeros((150, 150))
@@ -837,10 +920,19 @@ def create_poster(
             LONS, LATS = np.meshgrid(lons, lats)
             X_proj, Y_proj = transformer_fwd.transform(LONS, LATS)
 
-            contour_color = THEME.get('contour', THEME.get('text', '#888888'))
-            contour_alpha = THEME.get('contour_alpha', 0.25)
+            contour_color = THEME.get("contour", THEME.get("text", "#888888"))
+            contour_alpha = THEME.get("contour_alpha", 0.25)
 
-            ax.contour(X_proj, Y_proj, Z, levels=20, colors=contour_color, linewidths=0.5, alpha=contour_alpha, zorder=0.2)
+            ax.contour(
+                X_proj,
+                Y_proj,
+                Z,
+                levels=20,
+                colors=contour_color,
+                linewidths=0.5,
+                alpha=contour_alpha,
+                zorder=0.2,
+            )
         except Exception as e:
             print(f"Error rendering contours: {e}")
 
@@ -849,7 +941,7 @@ def create_poster(
         print("Rendering blueprint technical styling...")
         # Draw blueprint grid
         draw_blueprint_grid(ax)
-        
+
         # A. Setup blueprint background on figure and axes
         fig.patch.set_facecolor(THEME["bg"])
         ax.set_facecolor(THEME["bg"])
@@ -861,8 +953,10 @@ def create_poster(
                 try:
                     water_polys = ox.projection.project_gdf(water_polys)
                 except Exception:
-                    water_polys = water_polys.to_crs(g_proj.graph['crs'])
-                water_polys.boundary.plot(ax=ax, color='#FFFFFF', linewidth=1.2, alpha=0.8, zorder=0.5)
+                    water_polys = water_polys.to_crs(g_proj.graph["crs"])
+                water_polys.boundary.plot(
+                    ax=ax, color="#FFFFFF", linewidth=1.2, alpha=0.8, zorder=0.5
+                )
 
         # C. Draw parks outlines
         if parks is not None and not parks.empty:
@@ -871,16 +965,18 @@ def create_poster(
                 try:
                     parks_polys = ox.projection.project_gdf(parks_polys)
                 except Exception:
-                    parks_polys = parks_polys.to_crs(g_proj.graph['crs'])
-                parks_polys.boundary.plot(ax=ax, color='#FFFFFF', linewidth=0.8, alpha=0.5, zorder=0.8)
-
+                    parks_polys = parks_polys.to_crs(g_proj.graph["crs"])
+                parks_polys.boundary.plot(
+                    ax=ax, color="#FFFFFF", linewidth=0.8, alpha=0.5, zorder=0.8
+                )
 
     elif THEME.get("watercolor"):
         print("Rendering hand-painted watercolor styling...")
         from shapely.geometry import box
+
         minx, maxx = crop_xlim
         miny, maxy = crop_ylim
-        diag = np.sqrt((maxx - minx)**2 + (maxy - miny)**2)
+        diag = np.sqrt((maxx - minx) ** 2 + (maxy - miny) ** 2)
         bbox_poly = box(minx, miny, maxx, maxy)
 
         # A. Setup deep ocean background
@@ -891,12 +987,14 @@ def create_poster(
         water_union = None
         water_polys = None
         if water is not None and not water.empty:
-            water_polys_filtered = water[water.geometry.type.isin(["Polygon", "MultiPolygon"])]
+            water_polys_filtered = water[
+                water.geometry.type.isin(["Polygon", "MultiPolygon"])
+            ]
             if not water_polys_filtered.empty:
                 try:
                     water_polys = ox.projection.project_gdf(water_polys_filtered)
                 except Exception:
-                    water_polys = water_polys_filtered.to_crs(g_proj.graph['crs'])
+                    water_polys = water_polys_filtered.to_crs(g_proj.graph["crs"])
                 water_polys_proj = water_polys.intersection(bbox_poly)
                 water_polys_proj = water_polys_proj[~water_polys_proj.is_empty]
                 if not water_polys_proj.empty:
@@ -909,7 +1007,11 @@ def create_poster(
             viewport_land = bbox_poly
 
         # D. Plot concentric water bands (watercolor bleed along shores)
-        if water_union is not None and not water_union.is_empty and not viewport_land.is_empty:
+        if (
+            water_union is not None
+            and not water_union.is_empty
+            and not viewport_land.is_empty
+        ):
             buffer_fractions = [0.08, 0.05, 0.025, 0.01]
             opacities = [0.15, 0.3, 0.5, 0.8]
             for i, frac in enumerate(buffer_fractions):
@@ -923,9 +1025,15 @@ def create_poster(
                         else:
                             polys = list(water_band.geoms)
                         for poly in polys:
-                            patch = patches.Polygon(np.array(poly.exterior.coords), facecolor=SHALLOW_WATER_GRADIENT[i], edgecolor='none', alpha=opacities[i], zorder=1.0 + i * 0.1)
+                            patch = patches.Polygon(
+                                np.array(poly.exterior.coords),
+                                facecolor=SHALLOW_WATER_GRADIENT[i],
+                                edgecolor="none",
+                                alpha=opacities[i],
+                                zorder=1.0 + i * 0.1,
+                            )
                             ax.add_patch(patch)
-        
+
         # E. Plot default parchment background for land
         if not viewport_land.is_empty:
             if isinstance(viewport_land, Polygon):
@@ -935,31 +1043,38 @@ def create_poster(
             else:
                 polys = []
             for poly in polys:
-                patch = patches.Polygon(np.array(poly.exterior.coords), facecolor=THEME["bg"], edgecolor='none', zorder=2.0)
+                patch = patches.Polygon(
+                    np.array(poly.exterior.coords),
+                    facecolor=THEME["bg"],
+                    edgecolor="none",
+                    zorder=2.0,
+                )
                 ax.add_patch(patch)
 
         # F. Fetch, color and plot neighborhoods/districts
         neighborhood_polys = []
-        
+
         if neighborhoods is not None and not neighborhoods.empty:
             try:
                 neighborhoods_proj = ox.projection.project_gdf(neighborhoods)
             except Exception:
-                neighborhoods_proj = neighborhoods.to_crs(g_proj.graph['crs'])
-                
+                neighborhoods_proj = neighborhoods.to_crs(g_proj.graph["crs"])
+
             # Collect points (centroids) of place features
             points = []
             for geom in neighborhoods_proj.geometry:
                 if geom is not None and not geom.is_empty:
                     points.append(geom.centroid)
-                    
+
             if len(points) >= 3:
                 # Compute Voronoi cells bounded by bbox
                 from shapely.geometry import MultiPoint
+
                 mp = MultiPoint(points)
                 vor_cells = voronoi_diagram(mp, envelope=bbox_poly)
                 if vor_cells is not None:
                     from shapely.geometry import GeometryCollection
+
                     if isinstance(vor_cells, GeometryCollection):
                         geoms = list(vor_cells.geoms)
                     else:
@@ -975,59 +1090,84 @@ def create_poster(
                 neighborhoods_proj = neighborhoods_proj[~neighborhoods_proj.is_empty]
                 for geom in neighborhoods_proj.geometry:
                     neighborhood_polys.append(geom)
-                    
+
         # If still empty or too few, create a simple 4x4 grid partition so we always have colored districts
         if len(neighborhood_polys) < 3:
-            print("Not enough neighborhood points. Creating a grid partition for watercolor effect...")
+            print(
+                "Not enough neighborhood points. Creating a grid partition for watercolor effect..."
+            )
             x_coords = np.linspace(minx, maxx, 5)
             y_coords = np.linspace(miny, maxy, 5)
             for ix in range(4):
                 for iy in range(4):
-                    cell = box(x_coords[ix], y_coords[iy], x_coords[ix+1], y_coords[iy+1])
+                    cell = box(
+                        x_coords[ix], y_coords[iy], x_coords[ix + 1], y_coords[iy + 1]
+                    )
                     cell_cropped = cell.intersection(viewport_land)
                     if not cell_cropped.is_empty:
                         neighborhood_polys.append(cell_cropped)
 
         if neighborhood_polys:
             from geopandas import GeoSeries
+
             gdf_neigh = GeoDataFrame(geometry=GeoSeries(neighborhood_polys))
             # Apply greedy coloring
             color_indices = color_neighborhoods(gdf_neigh)
             gdf_neigh["color_idx"] = color_indices
-            
+
             # Draw neighborhood shapes
             for idx, row in gdf_neigh.iterrows():
                 geom = row.geometry
                 palette_color = WATERCOLOR_PALETTE[row.color_idx]
-                
+
                 if isinstance(geom, Polygon):
                     polys = [geom]
                 elif isinstance(geom, MultiPolygon):
                     polys = list(geom.geoms)
                 else:
                     continue
-                    
+
                 for poly in polys:
                     # Draw fill
-                    fill_patch = patches.Polygon(np.array(poly.exterior.coords), facecolor=palette_color["fill"], edgecolor='none', zorder=2.1)
+                    fill_patch = patches.Polygon(
+                        np.array(poly.exterior.coords),
+                        facecolor=palette_color["fill"],
+                        edgecolor="none",
+                        zorder=2.1,
+                    )
                     ax.add_patch(fill_patch)
-                    
+
                     # Draw thick inner border tint
-                    stroke_patch = patches.Polygon(np.array(poly.exterior.coords), facecolor='none', edgecolor=palette_color["stroke"], linewidth=5.0, alpha=0.5, zorder=2.2)
+                    stroke_patch = patches.Polygon(
+                        np.array(poly.exterior.coords),
+                        facecolor="none",
+                        edgecolor=palette_color["stroke"],
+                        linewidth=5.0,
+                        alpha=0.5,
+                        zorder=2.2,
+                    )
                     ax.add_patch(stroke_patch)
-                    
+
                     # Draw thin ink boundary line
-                    ink_patch = patches.Polygon(np.array(poly.exterior.coords), facecolor='none', edgecolor=INK_COLOR, linewidth=0.5, zorder=2.3)
+                    ink_patch = patches.Polygon(
+                        np.array(poly.exterior.coords),
+                        facecolor="none",
+                        edgecolor=INK_COLOR,
+                        linewidth=0.5,
+                        zorder=2.3,
+                    )
                     ax.add_patch(ink_patch)
 
         # G. Plot parks on top of neighborhood fills
         if parks is not None and not parks.empty:
-            parks_polys_filtered = parks[parks.geometry.type.isin(["Polygon", "MultiPolygon"])]
+            parks_polys_filtered = parks[
+                parks.geometry.type.isin(["Polygon", "MultiPolygon"])
+            ]
             if not parks_polys_filtered.empty:
                 try:
                     parks_polys = ox.projection.project_gdf(parks_polys_filtered)
                 except Exception:
-                    parks_polys = parks_polys_filtered.to_crs(g_proj.graph['crs'])
+                    parks_polys = parks_polys_filtered.to_crs(g_proj.graph["crs"])
                 parks_polys_proj = parks_polys.intersection(bbox_poly)
                 parks_polys_proj = parks_polys_proj[~parks_polys_proj.is_empty]
                 if not parks_polys_proj.empty:
@@ -1035,11 +1175,16 @@ def create_poster(
                     if water_union is not None and not water_union.is_empty:
                         parks_polys_proj = parks_polys_proj.difference(water_union)
                         parks_polys_proj = parks_polys_proj[~parks_polys_proj.is_empty]
-                    
+
                     if not parks_polys_proj.empty:
                         if isinstance(parks_polys_proj, GeoSeries):
                             parks_polys_proj = GeoDataFrame(geometry=parks_polys_proj)
-                        parks_polys_proj.plot(ax=ax, facecolor=THEME['parks'], edgecolor='none', zorder=3.0)
+                        parks_polys_proj.plot(
+                            ax=ax,
+                            facecolor=THEME["parks"],
+                            edgecolor="none",
+                            zorder=3.0,
+                        )
 
     else:
         # Standard rendering layout (non-watercolor)
@@ -1049,8 +1194,10 @@ def create_poster(
                 try:
                     water_polys = ox.projection.project_gdf(water_polys)
                 except Exception:
-                    water_polys = water_polys.to_crs(g_proj.graph['crs'])
-                water_polys.plot(ax=ax, facecolor=THEME['water'], edgecolor='none', zorder=0.5)
+                    water_polys = water_polys.to_crs(g_proj.graph["crs"])
+                water_polys.plot(
+                    ax=ax, facecolor=THEME["water"], edgecolor="none", zorder=0.5
+                )
 
         if parks is not None and not parks.empty:
             parks_polys = parks[parks.geometry.type.isin(["Polygon", "MultiPolygon"])]
@@ -1058,8 +1205,10 @@ def create_poster(
                 try:
                     parks_polys = ox.projection.project_gdf(parks_polys)
                 except Exception:
-                    parks_polys = parks_polys.to_crs(g_proj.graph['crs'])
-                parks_polys.plot(ax=ax, facecolor=THEME['parks'], edgecolor='none', zorder=0.8)
+                    parks_polys = parks_polys.to_crs(g_proj.graph["crs"])
+                parks_polys.plot(
+                    ax=ax, facecolor=THEME["parks"], edgecolor="none", zorder=0.8
+                )
 
         if draw_buildings and buildings is not None and not buildings.empty:
             bldgs = buildings[buildings.geometry.type.isin(["Polygon", "MultiPolygon"])]
@@ -1067,9 +1216,15 @@ def create_poster(
                 try:
                     bldgs = ox.projection.project_gdf(bldgs)
                 except Exception:
-                    bldgs = bldgs.to_crs(g_proj.graph['crs'])
-                building_color = THEME.get('buildings', THEME.get('text', '#888888'))
-                bldgs.plot(ax=ax, facecolor=building_color, edgecolor='none', alpha=THEME.get('buildings_alpha', 0.08), zorder=1.5)
+                    bldgs = bldgs.to_crs(g_proj.graph["crs"])
+                building_color = THEME.get("buildings", THEME.get("text", "#888888"))
+                bldgs.plot(
+                    ax=ax,
+                    facecolor=building_color,
+                    edgecolor="none",
+                    alpha=THEME.get("buildings_alpha", 0.08),
+                    zorder=1.5,
+                )
 
     # Layer 2: Roads with hierarchy coloring
     print("Applying road hierarchy colors...")
@@ -1078,7 +1233,9 @@ def create_poster(
 
     # Plot the projected graph and then apply the cropped limits
     ox.plot_graph(
-        g_proj, ax=ax, bgcolor=THEME['bg'] if not THEME.get("watercolor") else DEEP_OCEAN,
+        g_proj,
+        ax=ax,
+        bgcolor=THEME["bg"] if not THEME.get("watercolor") else DEEP_OCEAN,
         node_size=0,
         edge_color=edge_colors,
         edge_linewidth=edge_widths,
@@ -1095,19 +1252,27 @@ def create_poster(
             try:
                 lines = ox.projection.project_gdf(lines)
             except Exception:
-                lines = lines.to_crs(g_proj.graph['crs'])
+                lines = lines.to_crs(g_proj.graph["crs"])
             # Fallback to motorway or text color so it naturally matches the active theme
-            transit_color = THEME.get('transit', THEME.get('road_motorway', THEME.get('text', '#FF0055')))
-            transit_width = THEME.get('transit_width', 1.5)
-            lines.plot(ax=ax, color=transit_color, linewidth=transit_width, alpha=0.9, zorder=5.0)
+            transit_color = THEME.get(
+                "transit", THEME.get("road_motorway", THEME.get("text", "#FF0055"))
+            )
+            transit_width = THEME.get("transit_width", 1.5)
+            lines.plot(
+                ax=ax,
+                color=transit_color,
+                linewidth=transit_width,
+                alpha=0.9,
+                zorder=5.0,
+            )
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlim(crop_xlim)
     ax.set_ylim(crop_ylim)
 
     # Layer 3: Gradients (Top and Bottom)
     if THEME.get("layout") != "vintage":
-        create_gradient_fade(ax, THEME['gradient_color'], location='bottom', zorder=10)
-        create_gradient_fade(ax, THEME['gradient_color'], location='top', zorder=10)
+        create_gradient_fade(ax, THEME["gradient_color"], location="bottom", zorder=10)
+        create_gradient_fade(ax, THEME["gradient_color"], location="top", zorder=10)
 
     # Calculate scale factor based on smaller dimension (reference 12 inches)
     # This ensures text scales properly for both portrait and landscape orientations
@@ -1188,7 +1353,9 @@ def create_poster(
 
     # Set text coordinates and format coords
     lat, lon = point
-    has_text = bool(display_city and display_city.strip()) and (show_text or THEME.get("layout") == "blueprint")
+    has_text = bool(display_city and display_city.strip()) and (
+        show_text or THEME.get("layout") == "blueprint"
+    )
 
     if THEME.get("layout") == "blueprint":
         coords = None
@@ -1197,7 +1364,11 @@ def create_poster(
         coords_y = None
         text_zorder = 15
     elif THEME.get("watercolor"):
-        coords = format_coords_dms(lat, lon) if (show_text or THEME.get("layout") == "blueprint") else None
+        coords = (
+            format_coords_dms(lat, lon)
+            if (show_text or THEME.get("layout") == "blueprint")
+            else None
+        )
         if has_text:
             if text_position == "top":
                 city_y = 0.928
@@ -1213,22 +1384,47 @@ def create_poster(
             coords_y = None
         text_zorder = 15
     elif THEME.get("layout") == "vintage":
-        coords = format_coords_dms(lat, lon) if ((show_text or THEME.get("layout") == "blueprint") and not THEME.get("hide_coords", False)) else None
+        coords = (
+            format_coords_dms(lat, lon)
+            if (
+                (show_text or THEME.get("layout") == "blueprint")
+                and not THEME.get("hide_coords", False)
+            )
+            else None
+        )
         if text_position == "top":
             city_y = 0.925
             country_y = 0.895
-            coords_y = 0.872 if ((show_text or THEME.get("layout") == "blueprint") and not THEME.get("hide_coords", False)) else None
+            coords_y = (
+                0.872
+                if (
+                    (show_text or THEME.get("layout") == "blueprint")
+                    and not THEME.get("hide_coords", False)
+                )
+                else None
+            )
         else:
             city_y = 0.105
             country_y = 0.075
-            coords_y = 0.052 if ((show_text or THEME.get("layout") == "blueprint") and not THEME.get("hide_coords", False)) else None
+            coords_y = (
+                0.052
+                if (
+                    (show_text or THEME.get("layout") == "blueprint")
+                    and not THEME.get("hide_coords", False)
+                )
+                else None
+            )
         text_zorder = 15
     else:
         coords = (
-            f"{lat:.4f}° N / {lon:.4f}° E"
-            if lat >= 0
-            else f"{abs(lat):.4f}° S / {lon:.4f}° E"
-        ) if (show_text or THEME.get("layout") == "blueprint") else None
+            (
+                f"{lat:.4f}° N / {lon:.4f}° E"
+                if lat >= 0
+                else f"{abs(lat):.4f}° S / {lon:.4f}° E"
+            )
+            if (show_text or THEME.get("layout") == "blueprint")
+            else None
+        )
         if coords and lon < 0:
             coords = coords.replace("E", "W")
         if text_position == "top":
@@ -1244,10 +1440,16 @@ def create_poster(
     if THEME.get("layout") == "blueprint":
         # Draw the complete blueprint decorations
         # A. Dashed map bounding box
-        ax.plot([0.05, 0.95, 0.95, 0.05, 0.05],
-                [0.17, 0.17, 0.83, 0.83, 0.17],
-                color="#FFFFFF", linestyle="--", linewidth=1.2 * scale_factor, transform=ax.transAxes, zorder=20)
-        
+        ax.plot(
+            [0.05, 0.95, 0.95, 0.05, 0.05],
+            [0.17, 0.17, 0.83, 0.83, 0.17],
+            color="#FFFFFF",
+            linestyle="--",
+            linewidth=1.2 * scale_factor,
+            transform=ax.transAxes,
+            zorder=20,
+        )
+
         # Calculate viewport dimensions in kilometers
         minx, maxx = crop_xlim
         miny, maxy = crop_ylim
@@ -1255,19 +1457,53 @@ def create_poster(
         map_h_m = maxy - miny
         map_w_km = map_w_m / 1000.0
         map_h_km = map_h_m / 1000.0
-        
+
         # Bottom dimension line and label
-        ax.annotate('', xy=(0.05, 0.155), xytext=(0.95, 0.155),
-                    arrowprops=dict(arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor),
-                    transform=ax.transAxes)
-        ax.text(0.5, 0.136, f"{map_w_km:.2f} Kilometers", transform=ax.transAxes, color="#FFFFFF", ha="center", fontproperties=font_coords, size=11 * scale_factor, zorder=21)
-        
+        ax.annotate(
+            "",
+            xy=(0.05, 0.155),
+            xytext=(0.95, 0.155),
+            arrowprops=dict(
+                arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor
+            ),
+            transform=ax.transAxes,
+        )
+        ax.text(
+            0.5,
+            0.136,
+            f"{map_w_km:.2f} Kilometers",
+            transform=ax.transAxes,
+            color="#FFFFFF",
+            ha="center",
+            fontproperties=font_coords,
+            size=11 * scale_factor,
+            zorder=21,
+        )
+
         # Left dimension line and label
-        ax.annotate('', xy=(0.03, 0.17), xytext=(0.03, 0.83),
-                    arrowprops=dict(arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor),
-                    transform=ax.transAxes)
-        ax.text(0.018, 0.5, f"{map_h_km:.2f} Kilometers", transform=ax.transAxes, color="#FFFFFF", rotation=90, ha="center", va="center", fontproperties=font_coords, size=11 * scale_factor, zorder=21)
-        
+        ax.annotate(
+            "",
+            xy=(0.03, 0.17),
+            xytext=(0.03, 0.83),
+            arrowprops=dict(
+                arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor
+            ),
+            transform=ax.transAxes,
+        )
+        ax.text(
+            0.018,
+            0.5,
+            f"{map_h_km:.2f} Kilometers",
+            transform=ax.transAxes,
+            color="#FFFFFF",
+            rotation=90,
+            ha="center",
+            va="center",
+            fontproperties=font_coords,
+            size=11 * scale_factor,
+            zorder=21,
+        )
+
         # Clip all map collections to the map bounding box (0.05 to 0.95, 0.17 to 0.83)
         clip_rect = patches.Rectangle((0.05, 0.17), 0.90, 0.66, transform=ax.transAxes)
         for col in ax.collections:
@@ -1281,63 +1517,168 @@ def create_poster(
             # Massive title in Playfair Display
             # Draw vertical arrow lines on left and right of the title area (x=0.15, 0.85)
             # Arrow height from y=0.86 to 0.94
-            ax.annotate('', xy=(0.15, 0.86), xytext=(0.15, 0.94),
-                        arrowprops=dict(arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor, alpha=0.9),
-                        transform=ax.transAxes)
-            ax.annotate('', xy=(0.85, 0.86), xytext=(0.85, 0.94),
-                        arrowprops=dict(arrowstyle="<->", color="#FFFFFF", linewidth=1 * scale_factor, alpha=0.9),
-                        transform=ax.transAxes)
+            ax.annotate(
+                "",
+                xy=(0.15, 0.86),
+                xytext=(0.15, 0.94),
+                arrowprops=dict(
+                    arrowstyle="<->",
+                    color="#FFFFFF",
+                    linewidth=1 * scale_factor,
+                    alpha=0.9,
+                ),
+                transform=ax.transAxes,
+            )
+            ax.annotate(
+                "",
+                xy=(0.85, 0.86),
+                xytext=(0.85, 0.94),
+                arrowprops=dict(
+                    arrowstyle="<->",
+                    color="#FFFFFF",
+                    linewidth=1 * scale_factor,
+                    alpha=0.9,
+                ),
+                transform=ax.transAxes,
+            )
             # Horizontal connecting dashed line
-            ax.plot([0.15, 0.85], [0.86, 0.86], color="#FFFFFF", linestyle="--", linewidth=1 * scale_factor, alpha=0.8, transform=ax.transAxes)
-            
+            ax.plot(
+                [0.15, 0.85],
+                [0.86, 0.86],
+                color="#FFFFFF",
+                linestyle="--",
+                linewidth=1 * scale_factor,
+                alpha=0.8,
+                transform=ax.transAxes,
+            )
+
             # Draw city title centered at y=0.88 (huge and sketchy or bold)
-            ax.text(0.5, 0.88, display_city.upper(), transform=ax.transAxes, color="#FFFFFF", ha="center", fontproperties=font_main_adjusted, size=adjusted_font_size * 1.5, zorder=15)
-            ax.text(0.5, 0.84, "SCALE 1:25,000 | BLUEPRINT-MAP-N°8", transform=ax.transAxes, color="#FFFFFF", alpha=0.9, ha="center", fontproperties=font_coords, size=10 * scale_factor, zorder=15)
-            
+            ax.text(
+                0.5,
+                0.88,
+                display_city.upper(),
+                transform=ax.transAxes,
+                color="#FFFFFF",
+                ha="center",
+                fontproperties=font_main_adjusted,
+                size=adjusted_font_size * 1.5,
+                zorder=15,
+            )
+            ax.text(
+                0.5,
+                0.84,
+                "SCALE 1:25,000 | BLUEPRINT-MAP-N°8",
+                transform=ax.transAxes,
+                color="#FFFFFF",
+                alpha=0.9,
+                ha="center",
+                fontproperties=font_coords,
+                size=10 * scale_factor,
+                zorder=15,
+            )
+
         # Draw bottom-left stats data box
         # Box from x=0.05 to 0.49, y=0.03 to 0.12 (increased for larger text)
         # Draw double border for technical data box
-        rect_outer = patches.Rectangle((0.05, 0.03), 0.44, 0.09, facecolor='none', edgecolor='#FFFFFF', linewidth=2 * scale_factor, transform=ax.transAxes, zorder=12)
+        rect_outer = patches.Rectangle(
+            (0.05, 0.03),
+            0.44,
+            0.09,
+            facecolor="none",
+            edgecolor="#FFFFFF",
+            linewidth=2 * scale_factor,
+            transform=ax.transAxes,
+            zorder=12,
+        )
         ax.add_patch(rect_outer)
-        rect_inner = patches.Rectangle((0.053, 0.033), 0.434, 0.084, facecolor='none', edgecolor='#FFFFFF', linewidth=0.8 * scale_factor, transform=ax.transAxes, zorder=13)
+        rect_inner = patches.Rectangle(
+            (0.053, 0.033),
+            0.434,
+            0.084,
+            facecolor="none",
+            edgecolor="#FFFFFF",
+            linewidth=0.8 * scale_factor,
+            transform=ax.transAxes,
+            zorder=13,
+        )
         ax.add_patch(rect_inner)
-        
+
         # Technical text lines inside the box
         dms_coords = format_coords_dms(lat, lon)
         lines = [
             display_city.upper(),
-            f"\"{display_country.upper()}\"",
+            f'"{display_country.upper()}"',
             f"COORDS: {dms_coords}",
             f"VIEWPORT: {map_w_km:.2f} KM x {map_h_km:.2f} KM",
             f"PROJ: TRANSVERSE MERCATOR / WGS 84",
-            "GRID REF: UTM-ZONE-54N"
+            "GRID REF: UTM-ZONE-54N",
         ]
-        
+
         y_positions = [0.104, 0.091, 0.078, 0.065, 0.052, 0.040]
         # Make fonts for lines inside the box (substantially enlarged!)
-        font_box_title = FontProperties(fname=active_fonts["bold"], size=15 * scale_factor) if active_fonts else FontProperties(family="monospace", weight="bold", size=15 * scale_factor)
-        font_box_sub = FontProperties(fname=active_fonts["light"], size=12 * scale_factor) if active_fonts else FontProperties(family="monospace", size=12 * scale_factor)
-        font_box_regular = FontProperties(fname=active_fonts["regular"], size=10 * scale_factor) if active_fonts else FontProperties(family="monospace", size=10 * scale_factor)
-        
+        font_box_title = (
+            FontProperties(fname=active_fonts["bold"], size=15 * scale_factor)
+            if active_fonts
+            else FontProperties(
+                family="monospace", weight="bold", size=15 * scale_factor
+            )
+        )
+        font_box_sub = (
+            FontProperties(fname=active_fonts["light"], size=12 * scale_factor)
+            if active_fonts
+            else FontProperties(family="monospace", size=12 * scale_factor)
+        )
+        font_box_regular = (
+            FontProperties(fname=active_fonts["regular"], size=10 * scale_factor)
+            if active_fonts
+            else FontProperties(family="monospace", size=10 * scale_factor)
+        )
+
         for idx, line_text in enumerate(lines):
             line_y = y_positions[idx]
-            line_font = font_box_title if idx == 0 else (font_box_sub if idx == 1 else font_box_regular)
-            ax.text(0.06, line_y, line_text, transform=ax.transAxes, color="#FFFFFF", ha="left", va="center", fontproperties=line_font, zorder=15)
-            
+            line_font = (
+                font_box_title
+                if idx == 0
+                else (font_box_sub if idx == 1 else font_box_regular)
+            )
+            ax.text(
+                0.06,
+                line_y,
+                line_text,
+                transform=ax.transAxes,
+                color="#FFFFFF",
+                ha="left",
+                va="center",
+                fontproperties=line_font,
+                zorder=15,
+            )
+
         # Draw the compass rose in the bottom-right corner (doubled radius to 0.065, shifted y to 0.095) -> Now radius 0.055, y to 0.082
-        draw_compass_rose(ax, 0.85, 0.082, 0.055, "#FFFFFF", THEME["bg"], font_props=font_coords)
+        draw_compass_rose(
+            ax, 0.85, 0.082, 0.055, "#FFFFFF", THEME["bg"], font_props=font_coords
+        )
 
     else:
         # Standard borders and text rendering
         # --- DECORATIVE BORDERS, BOXES, AND COMPASS FOR VINTAGE LAYOUT ---
         if THEME.get("layout") == "vintage":
             # Draw double outer border around the map poster canvas
-            ax.plot([0.015, 0.985, 0.985, 0.015, 0.015],
-                    [0.015, 0.015, 0.985, 0.985, 0.015],
-                    color=THEME["text"], linewidth=3 * scale_factor, transform=ax.transAxes, zorder=20)
-            ax.plot([0.02, 0.98, 0.98, 0.02, 0.02],
-                    [0.02, 0.02, 0.98, 0.98, 0.02],
-                    color=THEME["text"], linewidth=1 * scale_factor, transform=ax.transAxes, zorder=20)
+            ax.plot(
+                [0.015, 0.985, 0.985, 0.015, 0.015],
+                [0.015, 0.015, 0.985, 0.985, 0.015],
+                color=THEME["text"],
+                linewidth=3 * scale_factor,
+                transform=ax.transAxes,
+                zorder=20,
+            )
+            ax.plot(
+                [0.02, 0.98, 0.98, 0.02, 0.02],
+                [0.02, 0.02, 0.98, 0.98, 0.02],
+                color=THEME["text"],
+                linewidth=1 * scale_factor,
+                transform=ax.transAxes,
+                zorder=20,
+            )
 
             if THEME.get("watercolor"):
                 # Draw the wide rounded bottom bar only if text is present
@@ -1345,37 +1686,43 @@ def create_poster(
                     bar_y = 0.85 if text_position == "top" else 0.04
                     # Background fill
                     bottom_bar_bg = patches.FancyBboxPatch(
-                        (0.04, bar_y), 0.92, 0.11,
+                        (0.04, bar_y),
+                        0.92,
+                        0.11,
                         boxstyle="round,pad=0.005,rounding_size=0.015",
                         facecolor=THEME["bg"],
-                        edgecolor='none',
+                        edgecolor="none",
                         alpha=0.75,
                         transform=ax.transAxes,
-                        zorder=12
+                        zorder=12,
                     )
                     ax.add_patch(bottom_bar_bg)
-                    
+
                     # Outer border outline
                     bottom_bar_outer = patches.FancyBboxPatch(
-                        (0.04, bar_y), 0.92, 0.11,
+                        (0.04, bar_y),
+                        0.92,
+                        0.11,
                         boxstyle="round,pad=0.005,rounding_size=0.015",
-                        facecolor='none',
+                        facecolor="none",
                         edgecolor=THEME["text"],
                         linewidth=3 * scale_factor,
                         transform=ax.transAxes,
-                        zorder=13
+                        zorder=13,
                     )
                     ax.add_patch(bottom_bar_outer)
-                    
+
                     # Inner nested border outline
                     bottom_bar_inner = patches.FancyBboxPatch(
-                        (0.044, bar_y + 0.004), 0.912, 0.102,
+                        (0.044, bar_y + 0.004),
+                        0.912,
+                        0.102,
                         boxstyle="round,pad=0.005,rounding_size=0.012",
-                        facecolor='none',
+                        facecolor="none",
                         edgecolor=THEME["text"],
                         linewidth=1 * scale_factor,
                         transform=ax.transAxes,
-                        zorder=14
+                        zorder=14,
                     )
                     ax.add_patch(bottom_bar_inner)
             else:
@@ -1384,17 +1731,43 @@ def create_poster(
                     box_bg = THEME.get("box_bg", THEME["bg"])
                     box_y = 0.86 if text_position == "top" else 0.04
                     # Outer box filled
-                    rect_outer = patches.Rectangle((0.30, box_y), 0.40, 0.10, facecolor=box_bg, edgecolor=THEME["text"], linewidth=3 * scale_factor, transform=ax.transAxes, zorder=12)
+                    rect_outer = patches.Rectangle(
+                        (0.30, box_y),
+                        0.40,
+                        0.10,
+                        facecolor=box_bg,
+                        edgecolor=THEME["text"],
+                        linewidth=3 * scale_factor,
+                        transform=ax.transAxes,
+                        zorder=12,
+                    )
                     ax.add_patch(rect_outer)
                     # Inner box outline
-                    rect_inner = patches.Rectangle((0.304, box_y + 0.004), 0.392, 0.092, facecolor='none', edgecolor=THEME["text"], linewidth=1 * scale_factor, transform=ax.transAxes, zorder=13)
+                    rect_inner = patches.Rectangle(
+                        (0.304, box_y + 0.004),
+                        0.392,
+                        0.092,
+                        facecolor="none",
+                        edgecolor=THEME["text"],
+                        linewidth=1 * scale_factor,
+                        transform=ax.transAxes,
+                        zorder=13,
+                    )
                     ax.add_patch(rect_inner)
- 
+
             # Draw the compass rose in the top-right corner or bottom-right corner if text is top
             if show_text or THEME.get("layout") == "blueprint":
                 compass_y = 0.12 if text_position == "top" else 0.88
-                draw_compass_rose(ax, 0.88, compass_y, 0.05, THEME["text"], THEME["bg"], font_props=font_coords)
- 
+                draw_compass_rose(
+                    ax,
+                    0.88,
+                    compass_y,
+                    0.05,
+                    THEME["text"],
+                    THEME["bg"],
+                    font_props=font_coords,
+                )
+
         # --- BOTTOM TEXT ---
         if has_text:
             if city_y is not None:
@@ -1408,7 +1781,7 @@ def create_poster(
                     fontproperties=font_main_adjusted,
                     zorder=text_zorder,
                 )
- 
+
             if country_y is not None and spaced_country:
                 ax.text(
                     0.5,
@@ -1420,7 +1793,7 @@ def create_poster(
                     fontproperties=font_sub,
                     zorder=text_zorder,
                 )
- 
+
         if coords_y is not None and coords:
             ax.text(
                 0.5,
@@ -1428,13 +1801,17 @@ def create_poster(
                 coords,
                 transform=ax.transAxes,
                 color=THEME["text"],
-                alpha=0.7 if THEME.get("layout") != "vintage" else 0.9, # slightly higher opacity for readability on paper
+                alpha=(
+                    0.7 if THEME.get("layout") != "vintage" else 0.9
+                ),  # slightly higher opacity for readability on paper
                 ha="center",
                 fontproperties=font_coords,
                 zorder=text_zorder,
             )
- 
-    if THEME.get("layout") not in ["vintage", "blueprint"] and (show_text or THEME.get("layout") == "blueprint"):
+
+    if THEME.get("layout") not in ["vintage", "blueprint"] and (
+        show_text or THEME.get("layout") == "blueprint"
+    ):
         sep_y = 0.875 if text_position == "top" else 0.125
         ax.plot(
             [0.4, 0.6],
@@ -1469,7 +1846,8 @@ def create_poster(
 
     # 5. Save
     import io
-    in_memory = (output_file is None)
+
+    in_memory = output_file is None
     if in_memory:
         output_file_name_for_hash = f"map_{city}_{THEME.get('name', 'theme')}"
         buf = io.BytesIO()
@@ -1478,30 +1856,34 @@ def create_poster(
         output_file_name_for_hash = output_file
         dest = output_file
         print(f"Saving to {output_file}...")
- 
+
     fmt = output_format.lower()
     save_kwargs = dict(
         facecolor=THEME["bg"] if not THEME.get("watercolor") else DEEP_OCEAN,
         bbox_inches="tight",
         pad_inches=0.05,
     )
- 
+
     # DPI matters mainly for raster formats
     if fmt == "png":
         save_kwargs["dpi"] = 300
- 
+
     plt.savefig(dest, format=fmt, **save_kwargs)
     plt.close()
- 
+
     # Apply texture post-processing
-    post_process = THEME.get("post_process", "vintage" if THEME.get("layout") == "vintage" else None)
-    
+    post_process = THEME.get(
+        "post_process", "vintage" if THEME.get("layout") == "vintage" else None
+    )
+
     if post_process in ["vintage", "dark_paper"] and fmt == "png":
         try:
-            print(f"Applying {post_process} paper texture and vignette post-processing...")
+            print(
+                f"Applying {post_process} paper texture and vignette post-processing..."
+            )
             from PIL import Image
             import hashlib
- 
+
             # Load the saved map image
             if in_memory:
                 buf.seek(0)
@@ -1509,74 +1891,92 @@ def create_poster(
             else:
                 img = Image.open(output_file)
             width, height = img.size
- 
+
             # 1. Generate fine paper grain (half-resolution for speed/smoothness)
             fine_w, fine_h = width // 2, height // 2
- 
+
             # Set random seed based on filename hash to make texture reproducible yet unique
-            seed = int(hashlib.md5(output_file_name_for_hash.encode('utf-8')).hexdigest()[:8], 16)
+            seed = int(
+                hashlib.md5(output_file_name_for_hash.encode("utf-8")).hexdigest()[:8],
+                16,
+            )
             np.random.seed(seed)
- 
+
             # Generate fine grain
             fine_grain = np.random.normal(128, 12, (fine_h, fine_w))
-            fine_img = Image.fromarray(fine_grain.astype(np.uint8), mode='L')
-            fine_img = fine_img.resize((width, height), resample=Image.Resampling.BILINEAR)
+            fine_img = Image.fromarray(fine_grain.astype(np.uint8), mode="L")
+            fine_img = fine_img.resize(
+                (width, height), resample=Image.Resampling.BILINEAR
+            )
             fine_arr = np.array(fine_img, dtype=float)
- 
+
             # 2. Generate organic paper blotches (low-frequency noise)
             blotches_w, blotches_h = width // 16, height // 16
             blotches = np.random.normal(128, 14, (blotches_h, blotches_w))
-            blotches_img = Image.fromarray(blotches.astype(np.uint8), mode='L')
-            blotches_img = blotches_img.resize((width, height), resample=Image.Resampling.BILINEAR)
+            blotches_img = Image.fromarray(blotches.astype(np.uint8), mode="L")
+            blotches_img = blotches_img.resize(
+                (width, height), resample=Image.Resampling.BILINEAR
+            )
             blotches_arr = np.array(blotches_img, dtype=float)
- 
+
             # Combine them: 60% fine grain, 40% blotches
             combined_noise = 0.6 * fine_arr + 0.4 * blotches_arr
- 
+
             # Normalize and scale to range around 1.0 (e.g. 0.82 to 1.18 for stronger grain)
             noise_factor = 0.82 + 0.36 * (combined_noise / 255.0)
- 
+
             # 3. Generate a soft radial vignette (darker edges)
             x = np.linspace(-1, 1, width)
             y = np.linspace(-1, 1, height)
             X, Y = np.meshgrid(x, y)
             d = np.sqrt(X**2 + Y**2)
-            img_rgb = img.convert('RGB')
+            img_rgb = img.convert("RGB")
             img_arr = np.array(img_rgb, dtype=float)
- 
+
             if post_process == "vintage":
                 # Vignette factor: starts fading at 0.4 radius, corners reach about 0.65 intensity
-                vignette_arr = 1.0 - 0.35 * np.clip((d - 0.4) / (np.sqrt(2) - 0.4), 0, 1)
+                vignette_arr = 1.0 - 0.35 * np.clip(
+                    (d - 0.4) / (np.sqrt(2) - 0.4), 0, 1
+                )
                 # Sepia / warm staining vignette (warm corners)
                 vignette_r = vignette_arr
                 vignette_g = vignette_arr * 0.97
                 vignette_b = vignette_arr * 0.92
-                
+
                 # Apply noise and vignette everywhere
                 img_arr[:, :, 0] *= noise_factor * vignette_r
                 img_arr[:, :, 1] *= noise_factor * vignette_g
                 img_arr[:, :, 2] *= noise_factor * vignette_b
             elif post_process == "dark_paper":
                 # dark_paper: NO vignette, and grain is ONLY applied to the water!
-                water_hex = THEME.get("water", "#000000").lstrip('#')
-                water_rgb = tuple(int(water_hex[i:i+2], 16) for i in (0, 2, 4))
-                
+                water_hex = THEME.get("water", "#000000").lstrip("#")
+                water_rgb = tuple(int(water_hex[i : i + 2], 16) for i in (0, 2, 4))
+
                 # Calculate distance from each pixel to the water color
                 diff = np.abs(img_arr - np.array(water_rgb, dtype=float))
                 dist = np.sum(diff, axis=2)
-                
+
                 # Soft mask: 1.0 where exactly water, fading to 0.0 at a distance of 30
                 water_mask = np.clip(1.0 - (dist / 30.0), 0, 1)
-                
+
                 # Apply noise only to water masked areas
-                img_arr[:, :, 0] = img_arr[:, :, 0] * (1 - water_mask) + (img_arr[:, :, 0] * noise_factor) * water_mask
-                img_arr[:, :, 1] = img_arr[:, :, 1] * (1 - water_mask) + (img_arr[:, :, 1] * noise_factor) * water_mask
-                img_arr[:, :, 2] = img_arr[:, :, 2] * (1 - water_mask) + (img_arr[:, :, 2] * noise_factor) * water_mask
- 
+                img_arr[:, :, 0] = (
+                    img_arr[:, :, 0] * (1 - water_mask)
+                    + (img_arr[:, :, 0] * noise_factor) * water_mask
+                )
+                img_arr[:, :, 1] = (
+                    img_arr[:, :, 1] * (1 - water_mask)
+                    + (img_arr[:, :, 1] * noise_factor) * water_mask
+                )
+                img_arr[:, :, 2] = (
+                    img_arr[:, :, 2] * (1 - water_mask)
+                    + (img_arr[:, :, 2] * noise_factor) * water_mask
+                )
+
             # Clip values to [0, 255] and convert back to uint8
             img_arr = np.clip(img_arr, 0, 255).astype(np.uint8)
             final_img = Image.fromarray(img_arr)
- 
+
             # Save back
             if in_memory:
                 out_buf = io.BytesIO()
@@ -1587,38 +1987,39 @@ def create_poster(
                 print("Vintage post-processing completed successfully!")
         except Exception as e:
             print(f"⚠ Warning: Vintage post-processing failed: {e}")
- 
+
     # Apply mystic gold post-processing (deep vignette and canvas texture)
     if THEME.get("layout") == "mystic_gold" and fmt == "png":
         try:
             print("Applying mystic gold canvas texture and vignette...")
             from PIL import Image
+
             if in_memory:
                 buf.seek(0)
                 img = Image.open(buf)
             else:
                 img = Image.open(output_file)
             width, height = img.size
-            
+
             # 1. Very fine canvas noise
             noise = np.random.normal(128, 8, (height, width))
-            noise_img = Image.fromarray(noise.astype(np.uint8), mode='L')
+            noise_img = Image.fromarray(noise.astype(np.uint8), mode="L")
             noise_arr = np.array(noise_img, dtype=float)
             noise_factor = 0.90 + 0.20 * (noise_arr / 255.0)
-            
+
             # 2. Deep vignette (very dark edges)
             x = np.linspace(-1, 1, width)
             y = np.linspace(-1, 1, height)
             X, Y = np.meshgrid(x, y)
             d = np.sqrt(X**2 + Y**2)
             vignette = 1.0 - 0.7 * np.clip((d - 0.5) / (np.sqrt(2) - 0.5), 0, 1)
-            
+
             # Apply
-            img_rgb = img.convert('RGB')
+            img_rgb = img.convert("RGB")
             img_arr = np.array(img_rgb, dtype=float)
             for c in range(3):
                 img_arr[:, :, c] *= noise_factor * vignette
-                
+
             img_arr = np.clip(img_arr, 0, 255).astype(np.uint8)
             final_img = Image.fromarray(img_arr)
             if in_memory:
@@ -1630,7 +2031,7 @@ def create_poster(
                 print("Mystic Gold post-processing completed successfully!")
         except Exception as e:
             print(f"Warning: Mystic Gold post-processing failed: {e}")
- 
+
     if in_memory:
         buf.seek(0)
         return buf.getvalue()
@@ -1640,7 +2041,8 @@ def create_poster(
 
 def print_examples():
     """Print usage examples."""
-    print("""
+    print(
+        """
 City Map Poster Generator
 =========================
 
@@ -1694,7 +2096,8 @@ Distance guide:
 
 Available themes can be found in the 'themes/' directory.
 Generated posters are saved to 'posters/' directory.
-""")
+"""
+    )
 
 
 def list_themes():
@@ -1711,8 +2114,8 @@ def list_themes():
         try:
             with open(theme_path, "r", encoding=FILE_ENCODING) as f:
                 theme_data = json.load(f)
-                display_name = theme_data.get('name', theme_name)
-                description = theme_data.get('description', '')
+                display_name = theme_data.get("name", theme_name)
+                description = theme_data.get("description", "")
         except (OSError, json.JSONDecodeError):
             display_name = theme_name
             description = ""
@@ -1911,10 +2314,14 @@ Examples:
             # Determine font to use: command-line overrides theme font
             theme_fonts = custom_fonts
             if not theme_fonts and THEME.get("font_family"):
-                print(f"Theme '{theme_name}' requests font family: {THEME['font_family']}")
+                print(
+                    f"Theme '{theme_name}' requests font family: {THEME['font_family']}"
+                )
                 theme_fonts = load_fonts(THEME["font_family"])
                 if not theme_fonts:
-                    print(f"⚠ Failed to load '{THEME['font_family']}', falling back to Roboto")
+                    print(
+                        f"⚠ Failed to load '{THEME['font_family']}', falling back to Roboto"
+                    )
 
             create_poster(
                 args.city,

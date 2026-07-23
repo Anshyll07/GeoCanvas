@@ -41,9 +41,7 @@ def download_google_font(font_family: str, weights: list = None) -> Optional[dic
 
         # Use requests library for cleaner HTTP handling
         params = {"family": f"{font_family}:wght@{weights_str}"}
-        headers = {
-            "User-Agent": "Mozilla/5.0"  # Get .woff2 files (better compression)
-        }
+        headers = {"User-Agent": "Mozilla/5.0"}  # Get .woff2 files (better compression)
 
         # Fetch CSS file
         response = requests.get(api_url, params=params, headers=headers, timeout=10)

@@ -18,13 +18,11 @@ def st_get_osm_geometries(aoi):
     df = get_osm_geometries(aoi=aoi)
     return df
 
+
 def st_plot_all(_df: GeoDataFrame, **kwargs):
     """Wrapper for package function"""
     fig = Plot(_df, **kwargs).plot_all()
     return fig
-
-
-
 
 
 def plt_to_svg(fig: figure) -> str:
