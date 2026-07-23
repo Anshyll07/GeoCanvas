@@ -1,0 +1,18 @@
+{
+    "name": "Vintage Aesthetic",
+    "description": "Antique style map with a textured beige background, teal water, dark olive parks, charcoal roads, and a decorative border.",
+    "bg": "#E6DBC6",
+    "text": "#1C1917",
+    "gradient_color": "#E6DBC6",
+    "water": "#7BBBA6",
+    "parks": "#333C29",
+    "road_motorway": "#1C1917",
+    "road_primary": "#1C1917",
+    "road_secondary": "#242121",
+    "road_tertiary": "#242121",
+    "road_residential": "#242121",
+    "road_default": "#242121",
+    "layout": "vintage",
+    "font_family": "Playfair Display",
+    "transit": "#8B2500"
+}

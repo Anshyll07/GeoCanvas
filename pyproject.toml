@@ -1,0 +1,67 @@
+[project]
+name = "prettymapp"
+version = "0.7.0"
+description = "Create beautiful maps and minimalist city posters from OpenStreetMap data"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Christoph Rieke", email = "christoph.k.rieke@gmail.com" },
+]
+keywords = ["map", "poster", "cartography", "osm", "openstreetmap", "streamlit", "visualization"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+]
+
+dependencies = [
+    "matplotlib>=3.8.0",
+    "osmnx>=2.0.0,<3",
+    "pandas>=2.0.0",
+    "geopandas>=1.0.0",
+    "shapely>=2.0.0",
+    "geopy>=2.4.0",
+    "requests>=2.31.0",
+    "pillow>=10.0.0",
+    "tqdm>=4.66.0",
+    "srtm-py>=0.3.7",
+    "lat-lon-parser>=1.3.0",
+]
+
+[project.optional-dependencies]
+streamlit = [
+    "streamlit>=1.30.0",
+    "streamlit-image-select>=0.1.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "mypy",
+    "black",
+    "pylint",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "." }
+include-package-data = false
+license-files = ["LICENSE"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["prettymapp*", "poster_generator*"]
+exclude = ["prettymapp.tests*"]
+
+[tool.setuptools.package-data]
+prettymapp = ["fonts/PermanentMarker-Regular.ttf"]
+poster_generator = ["fonts/*.ttf", "themes/*.json"]
+
+[project.urls]
+Homepage = "https://github.com/chrieke/prettymapp"

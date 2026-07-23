@@ -1,0 +1,19 @@
+{
+    "name": "Cyber Blue",
+    "description": "Deep black canvas with glowing cyber blue and cyan street networks.",
+    "bg": "#030408",
+    "text": "#ffffff",
+    "gradient_color": "#030408",
+    "water": "#1a5f86",
+    "parks": "#040810",
+    "road_motorway": "#a6e5ff",
+    "road_primary": "#23c9ff",
+    "road_secondary": "#1bb4e6",
+    "road_tertiary": "#159bc4",
+    "road_residential": "#107ca1",
+    "road_default": "#0b5873",
+    "layout": "standard",
+    "post_process": "dark_paper",
+    "font_family": "Oswald",
+    "transit": "#FF0055"
+}

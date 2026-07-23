@@ -1,0 +1,19 @@
+{
+  "name": "Copper Dark",
+  "description": "A very dark brown canvas with bright, glowing copper and orange street lines.",
+  "bg": "#120a06",
+  "text": "#fcecc2",
+  "gradient_color": "#120a06",
+  "water": "#964a18",
+  "parks": "#160c07",
+  "road_motorway": "#ffb088",
+  "road_primary": "#ff8c42",
+  "road_secondary": "#e57833",
+  "road_tertiary": "#d46a2a",
+  "road_residential": "#b8561c",
+  "road_default": "#9c4613",
+  "transit": "#FF7F50",
+  "layout": "standard",
+  "post_process": "dark_paper",
+  "font_family": "Montserrat"
+}

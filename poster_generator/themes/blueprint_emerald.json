@@ -1,0 +1,17 @@
+{
+  "name": "Blueprint Emerald",
+  "description": "Technical drafting blueprint map layout in Emerald theme.",
+  "bg": "#193324",
+  "text": "#FFFFFF",
+  "gradient_color": "#193324",
+  "water": "#FFFFFF",
+  "parks": "#FFFFFF",
+  "road_motorway": "#FFFFFF",
+  "road_primary": "#FFFFFF",
+  "road_secondary": "#FFFFFF",
+  "road_tertiary": "#FFFFFF",
+  "road_residential": "#FFFFFF",
+  "road_default": "#FFFFFF",
+  "layout": "blueprint",
+  "font_family": "Oswald"
+}

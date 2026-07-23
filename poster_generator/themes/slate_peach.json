@@ -1,0 +1,20 @@
+{
+    "name": "Slate Peach",
+    "description": "A soft slate blue and peachy beige color scheme with dark navy roads and accents.",
+    "bg": "#f4d7cc",
+    "text": "#2b3e5b",
+    "box_bg": "#f4d7cc",
+    "gradient_color": "#f4d7cc",
+    "water": "#7ba1ae",
+    "parks": "#7ba1ae",
+    "road_motorway": "#2b3e5b",
+    "road_primary": "#2b3e5b",
+    "road_secondary": "#2b3e5b",
+    "road_tertiary": "#2b3e5b",
+    "road_residential": "#3e5270",
+    "road_default": "#4b6080",
+    "layout": "vintage",
+    "hide_coords": true,
+    "font_family": "Playfair Display",
+    "transit": "#D17B65"
+}

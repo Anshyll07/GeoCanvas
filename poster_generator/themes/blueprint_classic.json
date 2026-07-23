@@ -1,0 +1,17 @@
+{
+  "name": "Blueprint Classic",
+  "description": "Technical drafting blueprint map layout in Classic theme.",
+  "bg": "#1E4A75",
+  "text": "#FFFFFF",
+  "gradient_color": "#1E4A75",
+  "water": "#FFFFFF",
+  "parks": "#FFFFFF",
+  "road_motorway": "#FFFFFF",
+  "road_primary": "#FFFFFF",
+  "road_secondary": "#FFFFFF",
+  "road_tertiary": "#FFFFFF",
+  "road_residential": "#FFFFFF",
+  "road_default": "#FFFFFF",
+  "layout": "blueprint",
+  "font_family": "Oswald"
+}

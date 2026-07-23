@@ -1,0 +1,58 @@
+from io import StringIO
+import unicodedata
+import re
+from typing import Any
+
+from matplotlib.pyplot import figure
+import streamlit as st
+from geopandas import GeoDataFrame
+from shapely.geometry import Polygon
+
+from prettymapp.plotting import Plot
+from prettymapp.osm import get_osm_geometries
+
+
+@st.cache_data(show_spinner=False, hash_funcs={Polygon: lambda x: str(x.wkt)})
+def st_get_osm_geometries(aoi):
+    """Wrapper to enable streamlit caching for package function"""
+    df = get_osm_geometries(aoi=aoi)
+    return df
+
+def st_plot_all(_df: GeoDataFrame, **kwargs):
+    """Wrapper for package function"""
+    fig = Plot(_df, **kwargs).plot_all()
+    return fig
+
+
+
+
+
+def plt_to_svg(fig: figure) -> str:
+    imgdata = StringIO()
+    fig.savefig(
+        imgdata, format="svg", pad_inches=0, bbox_inches="tight", transparent=True
+    )
+    imgdata.seek(0)
+    svg_string = imgdata.getvalue()
+    return svg_string
+
+
+def slugify(value: Any, allow_unicode: bool = False):
+    """
+    Taken from https://github.com/django/django/blob/master/django/utils/text.py
+    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+    dashes to single dashes. Remove characters that aren't alphanumerics,
+    underscores, or hyphens. Convert to lowercase. Also strip leading and
+    trailing whitespace, dashes, and underscores.
+    """
+    value = str(value)
+    if allow_unicode:
+        value = unicodedata.normalize("NFKC", value)
+    else:
+        value = (
+            unicodedata.normalize("NFKD", value)
+            .encode("ascii", "ignore")
+            .decode("ascii")
+        )
+    value = re.sub(r"[^\w\s-]", "", value.lower())
+    return re.sub(r"[-\s]+", "-", value).strip("-_")

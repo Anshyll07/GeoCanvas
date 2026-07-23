@@ -1,0 +1,19 @@
+{
+    "name": "Watercolor Vintage",
+    "description": "Hand-painted watercolor street map with neighborhood fills, concentric coastal water bands, and charcoal roads.",
+    "bg": "#E6DBC6",
+    "text": "#1C1917",
+    "gradient_color": "#E6DBC6",
+    "water": "#7BBBA6",
+    "parks": "#333C29",
+    "road_motorway": "#1C1917",
+    "road_primary": "#1C1917",
+    "road_secondary": "#242121",
+    "road_tertiary": "#242121",
+    "road_residential": "#242121",
+    "road_default": "#242121",
+    "layout": "vintage",
+    "watercolor": true,
+    "font_family": "Playfair Display",
+    "transit": "#8B2500"
+}

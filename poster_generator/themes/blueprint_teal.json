@@ -1,0 +1,17 @@
+{
+  "name": "Blueprint Teal",
+  "description": "Technical drafting blueprint map layout in Teal theme.",
+  "bg": "#0E2B30",
+  "text": "#FFFFFF",
+  "gradient_color": "#0E2B30",
+  "water": "#FFFFFF",
+  "parks": "#FFFFFF",
+  "road_motorway": "#FFFFFF",
+  "road_primary": "#FFFFFF",
+  "road_secondary": "#FFFFFF",
+  "road_tertiary": "#FFFFFF",
+  "road_residential": "#FFFFFF",
+  "road_default": "#FFFFFF",
+  "layout": "blueprint",
+  "font_family": "Oswald"
+}
