@@ -1278,6 +1278,7 @@ def create_poster(
         try:
             from shapely.geometry import Point
             import geopandas as gpd
+
             # Create a GeoDataFrame for the marker point using WGS84 CRS (epsg:4326)
             marker_gdf = gpd.GeoDataFrame(
                 geometry=[Point(marker_lon, marker_lat)], crs="epsg:4326"
@@ -1292,12 +1293,23 @@ def create_poster(
             elif marker_style == "dot":
                 marker_path = "o"
                 marker_size = 200
-            else: # pin
-                marker_path = "^" # A simple triangle pin
+            else:  # pin
+                marker_path = "^"  # A simple triangle pin
                 marker_size = 400
 
-            ax.scatter(mx, my, color=marker_color, marker=marker_path, s=marker_size, zorder=8, edgecolor="white", linewidth=1.5)
-            print(f"Added custom {marker_style} marker at ({marker_lat}, {marker_lon}).")
+            ax.scatter(
+                mx,
+                my,
+                color=marker_color,
+                marker=marker_path,
+                s=marker_size,
+                zorder=8,
+                edgecolor="white",
+                linewidth=1.5,
+            )
+            print(
+                f"Added custom {marker_style} marker at ({marker_lat}, {marker_lon})."
+            )
         except Exception as e:
             print(f"Failed to add custom marker: {e}")
 
@@ -2275,17 +2287,19 @@ Examples:
     )
 
     # Custom Marker
+    parser.add_argument("--marker-lat", type=float, help="Latitude for custom marker")
+    parser.add_argument("--marker-lon", type=float, help="Longitude for custom marker")
     parser.add_argument(
-        "--marker-lat", type=float, help="Latitude for custom marker"
+        "--marker-style",
+        type=str,
+        default="pin",
+        help="Marker style (e.g. pin, heart, dot)",
     )
     parser.add_argument(
-        "--marker-lon", type=float, help="Longitude for custom marker"
-    )
-    parser.add_argument(
-        "--marker-style", type=str, default="pin", help="Marker style (e.g. pin, heart, dot)"
-    )
-    parser.add_argument(
-        "--marker-color", type=str, default="#E74C3C", help="Hex color for custom marker"
+        "--marker-color",
+        type=str,
+        default="#E74C3C",
+        help="Hex color for custom marker",
     )
 
     args = parser.parse_args()

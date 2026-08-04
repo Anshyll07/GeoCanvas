@@ -830,17 +830,19 @@ def build_parser():
     )
 
     # Custom Marker
+    parser.add_argument("--marker-lat", type=float, help="Latitude for custom marker")
+    parser.add_argument("--marker-lon", type=float, help="Longitude for custom marker")
     parser.add_argument(
-        "--marker-lat", type=float, help="Latitude for custom marker"
+        "--marker-style",
+        type=str,
+        default="pin",
+        help="Marker style (e.g. pin, heart, dot)",
     )
     parser.add_argument(
-        "--marker-lon", type=float, help="Longitude for custom marker"
-    )
-    parser.add_argument(
-        "--marker-style", type=str, default="pin", help="Marker style (e.g. pin, heart, dot)"
-    )
-    parser.add_argument(
-        "--marker-color", type=str, default="#E74C3C", help="Hex color for custom marker"
+        "--marker-color",
+        type=str,
+        default="#E74C3C",
+        help="Hex color for custom marker",
     )
 
     return parser
