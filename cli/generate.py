@@ -189,6 +189,10 @@ def generate_poster_map(args):
         draw_contours=args.draw_contours,
         text_position=args.text_position,
         show_text=args.show_text,
+        marker_lat=args.marker_lat,
+        marker_lon=args.marker_lon,
+        marker_style=args.marker_style,
+        marker_color=args.marker_color,
     )
 
     output_path = args.output
@@ -823,6 +827,22 @@ def build_parser():
         action="store_false",
         dest="draw_contours",
         help="Disable drawing contours",
+    )
+
+    # Custom Marker
+    parser.add_argument("--marker-lat", type=float, help="Latitude for custom marker")
+    parser.add_argument("--marker-lon", type=float, help="Longitude for custom marker")
+    parser.add_argument(
+        "--marker-style",
+        type=str,
+        default="pin",
+        help="Marker style (e.g. pin, heart, dot)",
+    )
+    parser.add_argument(
+        "--marker-color",
+        type=str,
+        default="#E74C3C",
+        help="Hex color for custom marker",
     )
 
     return parser
